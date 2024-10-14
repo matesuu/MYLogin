@@ -1,3 +1,3 @@
-# LoginManager
+# MYLogin
 
-This is a side project I started working on a few days ago. Currently, it's only meant to be run as a cmd line utility in mac or linux but hopefully I get to making a GUI soon. All the basic functionality is worked out at the moment, so I guess the next step would be to refine some of the user stuff and maybe add one or two more features. Next steps after that would be to add automated login support so that you can login from terminal(will have to work out selenium for that). Hopefully this goes well. Pretty new to this so any suggestions are welcome
+This is a side project I started working on a few months ago. Originally, the concept was to be a standalone application complete with a GUI for ease of use, but the final product is now CLI utility that aims to be efficient and reliable as opposed to graphically complex, whilst still retaining a high degree of usability. This is the first largescale project I've worked on for in the context of open source development, so feel free to implement improvements as desired. More to come soon.
