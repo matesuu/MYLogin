@@ -8,24 +8,19 @@ user_info = str(os.getcwd()) + "/Data/user.json"
 data_name = str(os.getcwd()) + "/Data/data.json"
 log_path = str(os.getcwd()) + "/Logs"
 
+changelist = ["Access at " + str(datetime.datetime.now())]
 
 try:
 
-    with open(data_name) as log_open:
+        with open(data_name) as log_open:
 
-        temp = json.load(log_open)
-        log_flag = temp['LOGS']
+                temp = json.load(log_open)
+                log_flag = temp['LOGS']
 
 except:
 
     print("fatal: invalid JSON format (data.json). terminated")
     exit()
-
-
-if log_flag == "T":
-
-    log = open(log_path + "/Log " + str(datetime.datetime.now()) + ".txt", 'a')
-    log.write("Access at " + str(datetime.datetime.now()))
 
 
 def clear() -> None: #clears console and checks to see what os is being used
@@ -40,7 +35,7 @@ def clear() -> None: #clears console and checks to see what os is being used
 
 def configure_user() -> str:
 
-        my_name = "NULL"
+        my_name = ""
 
         try:
 
@@ -48,7 +43,7 @@ def configure_user() -> str:
                 
                     this_user = json.load(user_file)
 
-                    if this_user['user'] == "NULL":
+                    if this_user['user'] == "":
 
                             this_user['user'] = str(os.getlogin())
                             my_name = this_user['user']
@@ -76,13 +71,12 @@ def configure_data() -> None: # gets username and path used for backups
 
                 this_data = json.load(data_file)
 
-                if this_data['backup_path'] == "NULL":
-
+                if this_data['backup_path'] == "":
 
                         cleaned_path = str(os.getcwd()) + "/Backups"
                         this_data['backup_path'] = cleaned_path
 
-                if this_data['date_created'] == "NULL":
+                if this_data['date_created'] == "":
 
                         this_data['date_created'] = str(datetime.datetime.now())
 
@@ -229,7 +223,7 @@ def create() -> None:
                         outfile.seek(0)
                         json.dump(outfile_data, outfile, indent=4)
 
-                        log.write("Created New Client: " + cleaned_client + " at " + str(datetime.datetime.now()))
+                        changelist.append("\nCreated New Client " + cleaned_client + " at " + str(datetime.datetime.now()))
                 
         else:
 
@@ -254,13 +248,14 @@ def remove() -> None:
                                 removed_value = i['client']
                                 curr_data['data_entries'].remove(entry)
                                 flag = True
+
+                                changelist.append("\nRemoved Client " + i['client'] + " at " + str(datetime.datetime.now()))
+
                                 break
 
         with open(data_name, 'w') as json_file:
                 json.dump(curr_data, json_file, indent=4)
             
-                
-       
         
         if flag == False:
                 print("error: could not locate client")
@@ -284,11 +279,15 @@ def edit_username() -> None:
                     if cleaned_input == i['client']:
                                 
                             print(i['client'])
+                            old = i['username']
                             edited_value = i['client']
                             new_pass = input("USERNAME > ")
                             clean_pass = new_pass.replace(' ', '')
                             i['username'] = clean_pass
                             flag = True
+
+                            changelist.append("\nEdited " + i['client'] + " Username From " + old + " to " + clean_pass + " at " + str(datetime.datetime.now()))
+
                             break
 
             with open(data_name, 'w') as json_file:
@@ -318,11 +317,15 @@ def edit_password() -> None:
                         if cleaned_input == i['client']:
                                 
                                 print(i['client'])
+                                old = i['password']
                                 edited_value = i['client']
                                 new_pass = input("PASSWORD > ")
                                 clean_pass = new_pass.replace(' ', '')
                                 i['password'] = clean_pass
                                 flag = True
+
+                                changelist.append("\nEdited " + i['client'] + " Password From " + old + " to " + clean_pass + " at " + str(datetime.datetime.now()))
+
                                 break
 
         with open(data_name, 'w') as json_file:
@@ -352,11 +355,15 @@ def edit_url() -> None:
                     if cleaned_input == i['client']:
                                 
                             print(i['client'])
+                            old = i['url']
                             edited_value = i['client']
                             new_pass = input("URL > ")
                             clean_pass = new_pass.replace(' ', '')
                             i['url'] = clean_pass
                             flag = True
+
+                            changelist.append("\nEdited " + i['client'] + " URL From "  + old + " to " + clean_pass + " at " + str(datetime.datetime.now()))
+
                             break
 
             with open(data_name, 'w') as json_file:
@@ -394,6 +401,7 @@ def reset() -> None:
         if flag == True:
                 
                 print("deleted everything")
+                changelist.append("\nDeleted All Entries at " + str(datetime.datetime.now()))
 
         else:
                 print("process aborted")
@@ -436,6 +444,7 @@ def backup() -> None:
 
                 json.dump(data, json_file, indent=4)
         
+        changelist.append("\nData Backup at " + str(datetime.datetime.now()))
 
 def restore() -> None:
 
@@ -454,6 +463,7 @@ def restore() -> None:
         try:
                 with open(path_data['backup_path'] + '/' + backup_file) as json_file:
                         backup_data = json.load(json_file)
+                        changelist.append("\nRestored Data From Backup" + backup_file + " at " + str(datetime.datetime.now()))
                         
                 backup_data['ID'] = str(new_master)
                 
@@ -491,12 +501,6 @@ def disable() -> None:
     with open(data_name, 'w') as finish_disable:
 
         json.dump(d, finish_disable, indent=4)
-
-    log.close()
-
-    if os.path.exists(log_path + "/Log " + str(datetime.datetime.now())):
-        
-        os.remove(log_path + "/Log " + str(datetime.datetime.now()))
     
 
 def icon() -> None:
@@ -515,7 +519,7 @@ def invalid_argument() -> None:
         
         print("error: command not found. For a list of supported comamnds, enter 'help' to console.")
 
-
+# MAIN
 
 my_username = configure_user()
 configure_data()
@@ -591,6 +595,20 @@ while True:
                         break
                 case _:
                         invalid_argument()
-                
+
+
+with open (data_name) as log_flag:
+
+        f = json.load(log_flag)
+
+if(f['LOGS'] == "T"):
+
+        log = open(log_path + "/Log " + str(datetime.datetime.now()) + ".txt", 'a')
+    
+        for i in range(0, len(changelist)):
+
+                log.write(changelist[i])
+
+        log.close()
 
 print("terminated use at " + str(datetime.datetime.now()))
