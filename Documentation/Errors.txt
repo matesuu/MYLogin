@@ -1,0 +1,25 @@
+
+                                                        
+                                                        
+                                                    Getting Started and Error Documentation:
+
+
+1. Getting Started
+
+This manual will serve as a quick guide to using the MYLogin CLI, mainly for beginners unfamiliar with the command line. To start, we must ensure an installation of a given Python3 exists on the local device that MYLogin will run on. To start the application navigate to the local directory in which the MYLogin folder and do as follows:
+
+my_username:~$ cd MYLogin
+my_username:~$ python3 -m login
+
+2. Common Errors:
+
+Here is a list of errors and the documentation behind them:
+
+error - file not found: indicates that the file that user is attempting to restore from does not exist within Backups folder
+
+error - could not locate client: client information could not be found, therefore it does not exist in current repository of names
+
+fatal: invalid JSON format (filename.json): occurs when given JSON file is not formatted correctly and cannot be parsed. For reference, use to default github JSON files or reformat manually
+
+
+
