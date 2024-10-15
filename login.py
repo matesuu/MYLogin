@@ -472,9 +472,9 @@ def restore() -> None:
                         
                 print("restored from file")
 
-        except FileNotFoundError:
+        except:
                 
-                print("error: file not found")
+                print("fatal: file error")
 
 
 def enable() -> None:
