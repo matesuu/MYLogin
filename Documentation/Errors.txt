@@ -11,15 +11,20 @@ This manual will serve as a quick guide to using the MYLogin CLI, mainly for beg
 my_username:~$ cd MYLogin
 my_username:~$ python3 -m login
 
+NOTE: 
+
+Do not modify the naming conventions of any Folders (i.e. Data/Backups/Logs) as it sets these as predefined names within source code.
+Will modify this in the future but for now dont modify names.
+
 2. Common Errors:
 
 Here is a list of errors and the documentation behind them:
 
-error - file not found: indicates that the file that user is attempting to restore from does not exist within Backups folder
+error: file not found - indicates that the file that user is attempting to restore from does not exist within Backups folder
 
-error - could not locate client: client information could not be found, therefore it does not exist in current repository of names
+error: could not locate client - client information could not be found, therefore it does not exist in current repository of names
 
-fatal: invalid JSON format (filename.json): occurs when given JSON file is not formatted correctly and cannot be parsed. For reference, use to default github JSON files or reformat manually
+fatal: invalid JSON format (filename.json) - occurs when given JSON file is not formatted correctly and cannot be parsed. For reference, use to default github JSON files or reformat manually
 
-
+fatal: file error - file is not in a supported format (i.e. file is not JSON and uses an unknown or invalid extension)
 
