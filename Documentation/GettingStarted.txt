@@ -1,0 +1,40 @@
+
+                                                        
+                                                        
+                                                         The MYLogin Bible:
+
+
+1. Getting Started:
+
+This manual will serve as a quick guide to using the MYLogin CLI, mainly for beginners unfamiliar with the command line. 
+To start, we must ensure an installation of a given Python3 exists on the local device that MYLogin will run on. 
+To start the application navigate to the local directory in which the MYLogin folder and do as follows:
+
+my_username:~$ cd <directory>/MYLogin
+my_username:~$ python3 -m login
+
+NOTE: 
+
+Do not modify the naming conventions of any Folders (i.e. Data/Backups/Logs) as it sets these as predefined names within source code.
+Will modify this in the future but for now don't modify any folder or datafile names.
+
+2. System Design:
+
+This utility uses various folders to store data and perform operations. Data contains both user information and actual login credentials.
+Backups is a folder dedicated to storing user defined data backups with timestamps. The Logs folder is primarily concerned with detailing documentation 
+and is accessed while using the utility(read logs are enabled by default). It specifically logs any user made changes regarding the data stored. Addtionally Bash scripts are provided
+for the sake of convience.
+
+
+3. Common Errors:
+
+Here is a list of errors and the documentation behind them:
+
+error: file not found - indicates that the file that user is attempting to restore from does not exist within Backups folder
+
+error: could not locate client - client information could not be found, therefore it does not exist in current repository of names
+
+fatal: invalid JSON format (filename.json) - occurs when given JSON file is not formatted correctly and cannot be parsed. For reference, use to default github JSON files or reformat manually
+
+error: file restore error - file is not in a supported format (i.e. file is not JSON and uses an unknown or invalid extension)
+

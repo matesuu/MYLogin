@@ -33,6 +33,42 @@ def clear() -> None: #clears console and checks to see what os is being used
                 os.system('clear')
 
 
+def default() -> None:
+
+        default_input = input("default all data? (y/n) ")
+        new_input = default_input.replace(" ", '')
+
+        if new_input == 'n':
+
+                print("process aborted")
+
+        else:
+
+                with open(user_info) as read_user:
+
+                        default_user = json.load(read_user)
+
+                        default_user['user'] = ""
+                        default_user['connections'] = []
+        
+                        with open(user_info, 'w') as write_user:
+
+                               json.dump(default_user, write_user, indent = 4)
+
+                with open(data_name) as read_data:
+
+                        default_data = json.load(read_data)
+
+                        default_data['data_entries'] = []
+                        default_data['backup_path'] = ""
+                        default_data['date_created'] = ""
+                        default_data['ID'] = "0"
+                        default_data['LOGS'] = "T"
+
+                        with open(data_name, 'w') as write_data:
+
+                                json.dump(default_data, write_data, indent =4)
+
 def configure_user() -> str:
 
         my_name = ""
@@ -103,12 +139,13 @@ def help() -> None:
         print("rm - removes a specified cient password pair from dictionary]")
         print("edit - change a pre-existing information with an associated client - flags: [-username] [-password] [-url] default [-password]")
         print("kill -all - deletes all currently existing client-password pairs held within data file")
+        print("default - reset data folder")
         print("backup - writes current data to a new backup to be stored in backups folder")
         print("restore - restores data from a given backup")
         print("enable - enables read logs")
         print("disable - disables read logs")
         print("vrs - displays version information")
-        print("quit - terminate application\n")
+        print("exit - terminate application\n")
 
 
 def info() -> None:
@@ -132,7 +169,7 @@ def display() -> None:
 
 def search() -> None:
 
-        user_input = input("CLIENT > ")
+        user_input = input("client > ")
         cleaned_input = user_input.replace(' ','')
 
         with open(data_name) as outfile:
@@ -187,7 +224,7 @@ def create() -> None:
         with open(data_name) as check_file:
                 check_data = json.load(check_file)
         
-        new_client = input("CLIENT > ")
+        new_client = input("client > ")
         cleaned_client = new_client.replace(' ', '')
         
 
@@ -206,9 +243,9 @@ def create() -> None:
                 
         if flag == False:
 
-                new_username = input("USERNAME > ")
-                new_password = input("PASSWORD > ")
-                new_url = input("URL > ")
+                new_username = input("username > ")
+                new_password = input("password > ")
+                new_url = input("url > ")
 
                 cleaned_username = new_username.replace(' ','')
                 cleaned_password = new_password.replace(' ','')
@@ -231,7 +268,7 @@ def create() -> None:
 
 def remove() -> None:
 
-        user_input = input("CLIENT > ")
+        user_input = input("client > ")
         cleaned_input = user_input.replace(' ','')
         
         with open(data_name) as outfile:
@@ -263,45 +300,45 @@ def remove() -> None:
 
 def edit_username() -> None:
 
-    user_input = input("CLIENT > ")
-    cleaned_input = user_input.replace(' ', '')
+        user_input = input("client > ")
+        cleaned_input = user_input.replace(' ', '')
 
-    flag = False
+        flag = False
 
-    with open(data_name) as file:
+        with open(data_name) as file:
 
-            data = json.load(file)
+                data = json.load(file)
 
-    for entry in data['data_entries']:
+        for entry in data['data_entries']:
                 
-            for i in entry.values():
+                for i in entry.values():
                         
-                    if cleaned_input == i['client']:
+                        if cleaned_input == i['client']:
                                 
-                            print(i['client'])
-                            old = i['username']
-                            edited_value = i['client']
-                            new_pass = input("USERNAME > ")
-                            clean_pass = new_pass.replace(' ', '')
-                            i['username'] = clean_pass
-                            flag = True
+                                print(i['client'])
+                                old = i['username']
+                                edited_value = i['client']
+                                new_pass = input("username > ")
+                                clean_pass = new_pass.replace(' ', '')
+                                i['username'] = clean_pass
+                                flag = True
 
-                            changelist.append("\nEdited " + i['client'] + " Username From " + old + " to " + clean_pass + " at " + str(datetime.datetime.now()))
+                                changelist.append("\nEdited " + i['client'] + " Username From " + old + " to " + clean_pass + " at " + str(datetime.datetime.now()))
 
-                            break
+                                break
 
-            with open(data_name, 'w') as json_file:
-                
-                json.dump(data, json_file, indent=4)
+        with open(data_name, 'w') as json_file:
+            
+            json.dump(data, json_file, indent=4)
        
         
-            if flag == False:
+        if flag == False:
 
                 print("error: could not locate client")
         
 def edit_password() -> None:
 
-        user_input = input("CLIENT > ")
+        user_input = input("client > ")
         cleaned_input = user_input.replace(' ', '')
 
         flag = False
@@ -319,7 +356,7 @@ def edit_password() -> None:
                                 print(i['client'])
                                 old = i['password']
                                 edited_value = i['client']
-                                new_pass = input("PASSWORD > ")
+                                new_pass = input("password > ")
                                 clean_pass = new_pass.replace(' ', '')
                                 i['password'] = clean_pass
                                 flag = True
@@ -335,49 +372,49 @@ def edit_password() -> None:
         
         if flag == False:
 
-            print("error: could not locate client")
+                print("error: could not locate client")
 
 def edit_url() -> None:
 
-    user_input = input("CLIENT > ")
-    cleaned_input = user_input.replace(' ', '')
+        user_input = input("client > ")
+        cleaned_input = user_input.replace(' ', '')
 
-    flag = False
+        flag = False
 
-    with open(data_name) as file:
+        with open(data_name) as file:
 
-            data = json.load(file)
+                data = json.load(file)
 
-    for entry in data['data_entries']:
+        for entry in data['data_entries']:
                 
-            for i in entry.values():
+                for i in entry.values():
                         
-                    if cleaned_input == i['client']:
+                        if cleaned_input == i['client']:
                                 
-                            print(i['client'])
-                            old = i['url']
-                            edited_value = i['client']
-                            new_pass = input("URL > ")
-                            clean_pass = new_pass.replace(' ', '')
-                            i['url'] = clean_pass
-                            flag = True
+                                print(i['client'])
+                                old = i['url']
+                                edited_value = i['client']
+                                new_pass = input("url > ")
+                                clean_pass = new_pass.replace(' ', '')
+                                i['url'] = clean_pass
+                                flag = True
 
-                            changelist.append("\nEdited " + i['client'] + " URL From "  + old + " to " + clean_pass + " at " + str(datetime.datetime.now()))
+                                changelist.append("\nEdited " + i['client'] + " URL From " + old + " to " + clean_pass + " at " + str(datetime.datetime.now()))
 
-                            break
+                                break
 
-            with open(data_name, 'w') as json_file:
+        with open(data_name, 'w') as json_file:
             
-                json.dump(data, json_file, indent=4)
+            json.dump(data, json_file, indent=4)
        
         
-            if flag == False:
+        if flag == False:
 
-                    print("error: could not locate client")
+                print("error: could not locate client")
 
 def reset() -> None:
         
-        user_input = input("delete all entries? (y/n)")
+        user_input = input("delete all entries? (y/n) ")
         cleaned_input = user_input.replace(' ', '')
         flag = False
 
@@ -456,7 +493,7 @@ def restore() -> None:
 
         new_master = int(path_data['ID'])
         
-        backup_file = input("RESTORE WITH > ")
+        backup_file = input("restore with > ")
 
         #note: have to handle case where inputted string is not a valid file... try catch block maybe?
 
@@ -474,7 +511,7 @@ def restore() -> None:
 
         except:
                 
-                print("fatal: file error")
+                print("error: file error")
 
 
 def enable() -> None:
@@ -505,6 +542,7 @@ def disable() -> None:
 
 def icon() -> None:
 
+        
         print("""
                             _
  __  ___    ___            |+|                       
@@ -531,6 +569,10 @@ menu()
 while True:
 
         user_input = input(my_username + ":~$ > ")
+
+        if len(user_input.split()) == 1:
+
+                user_input = user_input.replace(' ', '')
 
         match user_input:
 
@@ -582,6 +624,9 @@ while True:
                 case "disable":
                         disable()
 
+                case "default":
+                        default()
+
                 case "vrs":
                         info()
 
@@ -591,7 +636,7 @@ while True:
                 case "cls":
                         clear()
                         
-                case "quit":
+                case "exit":
                         break
                 case _:
                         invalid_argument()
@@ -608,6 +653,8 @@ if(f['LOGS'] == "T"):
         for i in range(0, len(changelist)):
 
                 log.write(changelist[i])
+        
+        log.write("\nTerminated Use at " + str(datetime.datetime.now()))
 
         log.close()
 

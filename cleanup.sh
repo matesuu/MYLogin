@@ -7,5 +7,5 @@ DIR=$1
 
 find "$DIR" -type d -name "__pycache__" -exec rm -r {} + 
 
-echo "deleted __pycache__. cleanup complete in $DIR"
+echo "deleted __pycache__ cleanup complete in $DIR"
 exit 0
