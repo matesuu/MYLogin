@@ -4,8 +4,8 @@ import os
 import json
 import datetime
 
-user_info = str(os.getcwd()) + "/Data/user.json"
-data_name = str(os.getcwd()) + "/Data/data.json"
+user_info = str(os.getcwd()) + "/.data/user.json"
+data_name = str(os.getcwd()) + "/.data/data.json"
 log_path = str(os.getcwd()) + "/Logs"
 
 changelist = ["Access at " + str(datetime.datetime.now())]
