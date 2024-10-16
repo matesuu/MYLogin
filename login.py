@@ -6,7 +6,7 @@ import datetime
 
 user_info = str(os.getcwd()) + "/.data/user.json"
 data_name = str(os.getcwd()) + "/.data/data.json"
-log_path = str(os.getcwd()) + "/Logs"
+log_path = str(os.getcwd()) + "/logs"
 
 changelist = ["Access at " + str(datetime.datetime.now())]
 
@@ -109,7 +109,7 @@ def configure_data() -> None: # gets username and path used for backups
 
                 if this_data['backup_path'] == "":
 
-                        cleaned_path = str(os.getcwd()) + "/Backups"
+                        cleaned_path = str(os.getcwd()) + "/backups"
                         this_data['backup_path'] = cleaned_path
 
                 if this_data['date_created'] == "":
