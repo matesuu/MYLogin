@@ -544,7 +544,7 @@ def disable() -> None:
 def icon() -> None:
 
         
-        print("""
+        print(r"""
                             _
  __  ___    ___            |+|                       
 |  \/  \ \ / / |   ___ __ _ _ _ _
