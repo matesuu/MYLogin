@@ -121,6 +121,10 @@ def configure_data() -> None: # gets username and path used for backups
                         
                         json.dump(this_data, user_data, indent=4)
 
+def whoami() -> None:
+
+        print(str(os.getlogin()))
+
 
 def menu() -> None:
     
@@ -134,19 +138,19 @@ def help() -> None:
         
         print("\nhome - returns to main menu")
         print("ls - displays all current clients as a list")
-        print("fetch - returns all associated login information with a given client")
+        print("fetch - returns all associated login information with a given client [shortcut -> fetch <client> fetches specified client]")
         print("new - creates a new client-information pair in dictionary - flags: Optional: [-all]")
-        print("rm - removes a specified cient password pair from dictionary]")
+        print("rm - removes a specified cient password pair from dictionary [shortcut -> rm <client> removes specified client]")
         print("edit - change a pre-existing information with an associated client - flags: [-username] [-password] [-url] default [-password]")
-        print("kill -all - deletes all currently existing client-password pairs held within data file")
+        print("kill-all - deletes all currently existing client-password pairs held within data file")
         print("default - reset data folder")
         print("clear/cls - clear screen")
         print("backup - writes current data to a new backup to be stored in backups folder")
         print("restore - restores data from a given backup")
         print("enable - enables read logs")
         print("disable - disables read logs")
-        print("vrs - displays version information")
-        print("exit - terminate application\n")
+        print("version - displays version information")
+        print("exit - terminate execution\n")
 
 
 def info() -> None:
@@ -186,10 +190,10 @@ def search() -> None:
                         if cleaned_input == keys['client']:
 
                                 print("")
-                                print(keys['client'])
-                                print(keys['username'])
-                                print(keys['password'])
-                                print(keys['url'])
+                                print("client ~ " + keys['client'])
+                                print("username ~ " + keys['username'])
+                                print("password ~ " + keys['password'])
+                                print("url ~ " + keys['url'])
                                 flag = True
                                 
 
@@ -200,6 +204,37 @@ def search() -> None:
         print("")
                 
 
+def search_arg(arg):
+
+        user_input = arg
+        cleaned_input = user_input.replace(' ','')
+
+        with open(data_name) as outfile:
+                curr_data = json.load(outfile)
+                
+        flag = False
+
+                
+        for local_dicts in curr_data['data_entries']:
+
+                for keys in local_dicts.values():
+
+                        if cleaned_input == keys['client']:
+
+                                print("")
+                                print("client ~ " + keys['client'])
+                                print("username ~ " + keys['username'])
+                                print("password ~ " + keys['password'])
+                                print("url ~ " + keys['url'])
+                                flag = True
+                                
+
+        if flag == False:
+            
+                print("error: could not locate client", end = "")
+
+        print("")
+                
 
 def search_all() -> None:
 
@@ -210,10 +245,10 @@ def search_all() -> None:
 
                 for keys in local_dicts.values():
 
-                        print("\n" + keys['client'])
-                        print(keys['username'])
-                        print(keys['password'])
-                        print(keys['url'])
+                        print("\nclient ~ " + keys['client'])
+                        print("username ~ " + keys['username'])
+                        print("password ~ " + keys['password'])
+                        print("url ~ " + keys['url'])
         print("")
 
 
@@ -297,6 +332,39 @@ def remove() -> None:
         
         if flag == False:
                 print("error: could not locate client")
+
+        
+def remove_arg(arg) -> None:
+
+        user_input = arg
+        cleaned_input = user_input.replace(' ', '')
+        
+        with open(data_name) as outfile:
+                curr_data = json.load(outfile)
+                
+        flag = False
+
+        for entry in curr_data['data_entries']:
+                
+                for i in entry.values():
+                        
+                        if cleaned_input == i['client']:
+
+                                removed_value = i['client']
+                                curr_data['data_entries'].remove(entry)
+                                flag = True
+
+                                changelist.append("\nRemoved Client " + i['client'] + " at " + str(datetime.datetime.now()))
+
+                                break
+
+        with open(data_name, 'w') as json_file:
+                json.dump(curr_data, json_file, indent=4)
+            
+        
+        if flag == False:
+                print("error: could not locate client")
+
 
 
 def edit_username() -> None:
@@ -552,11 +620,52 @@ def icon() -> None:
 |_|  |_| |_| |____|___\__, |_|_||_|
                       |___/ 
         """) # prints icon
+
+def check_argument(string) -> None:
+
+        # valid: rm or fetch
+        string.replace(' ', '')
+        op = 0
+        c = 0
+        command = ""
+        arg = ""
+
+        for i in range(0, len(string)):
+
+                if command == "rm":
+                        
+                        op = 1
+                        break
+
+                if command == "fetch":
+
+                        op = 2
+                        break
+                
+                command = command + string[i]
+                c = c + 1
+        
+        for i in range(c, len(string)):
+
+                arg = arg + string[i]
+
+        
+        match op:
+
+                case 1:
+                        remove_arg(arg)
+                case 2:
+                        search_arg(arg)
+
+                case _:
+                        invalid_argument()
         
 
 def invalid_argument() -> None:
         
         print("error: command not found. For a list of supported comamnds, enter 'help' to console.")
+
+
 
 # MAIN
 
@@ -569,7 +678,7 @@ menu()
 
 while True:
 
-        user_input = input(my_username + ":~$ > ")
+        user_input = input(my_username + ":~$ ")
 
         if len(user_input.split()) == 1:
 
@@ -610,7 +719,7 @@ while True:
                 case "edit -url":
                         edit_url()
                         
-                case "kill -all":
+                case "kill-all":
                         reset()
 
                 case "backup":
@@ -628,7 +737,7 @@ while True:
                 case "default":
                         default()
 
-                case "vrs":
+                case "version":
                         info()
 
                 case "clear":
@@ -636,11 +745,14 @@ while True:
 
                 case "cls":
                         clear()
+
+                case "whoami":
+                        whoami()
                         
                 case "exit":
                         break
                 case _:
-                        invalid_argument()
+                        check_argument(user_input)
 
 
 with open (data_name) as log_flag:

@@ -1,0 +1,11 @@
+Requirements:
+
+Requires a external depedency "cryptography"
+
+FOR MAC AND LINUX:
+
+run bash.sh (dont forget to chmod +x bash.sh)
+
+FOR WINDOWS:
+
+the dependency is avaiable as a zip file in installation folder

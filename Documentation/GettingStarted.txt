@@ -13,7 +13,7 @@ To start the application navigate to the local directory in which the MYLogin fo
 my_username:~$ cd <directory>/MYLogin
 my_username:~$ python3 -m login
 
-or alternatively you can use the bash script provided to begin execution
+If you are using macOS or Linux Distribution, you can use the bash script provided to begin execution
 
 my_username:~$ cd <directory>/MYLogin
 my_username:~$ chmod +x login.sh
@@ -21,8 +21,8 @@ my_username:~$ ./login.sh
 
 
 The execution of the bash script as opposed to the actual .py file is beneficial as after every program termination it will also 
-delete the __pycache__ folder. chmod +x only needs to be specified once as it
-ensure sufficient permissions for system to allow execution.
+delete the __pycache__ folder. chmod +x only needs to be specified once as to
+ensure sufficient permissions for your system to allow execution.
 
 NOTE: 
 
