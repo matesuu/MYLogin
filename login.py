@@ -140,6 +140,7 @@ def help() -> None:
         print("edit - change a pre-existing information with an associated client - flags: [-username] [-password] [-url] default [-password]")
         print("kill -all - deletes all currently existing client-password pairs held within data file")
         print("default - reset data folder")
+        print("clear/cls - clear screen")
         print("backup - writes current data to a new backup to be stored in backups folder")
         print("restore - restores data from a given backup")
         print("enable - enables read logs")
