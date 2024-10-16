@@ -13,6 +13,17 @@ To start the application navigate to the local directory in which the MYLogin fo
 my_username:~$ cd <directory>/MYLogin
 my_username:~$ python3 -m login
 
+or alternatively you can use the bash script provided to begin execution
+
+my_username:~$ cd <directory>/MYLogin
+my_username:~$ chmod +x login.sh
+my_username:~$ ./login.sh
+
+
+The execution of the bash script as opposed to the actual .py file is beneficial as after every program termination it will also 
+delete the __pycache__ folder. chmod +x only needs to be specified once as it
+ensure sufficient permissions for system to allow execution.
+
 NOTE: 
 
 Do not modify the naming conventions of any Folders (i.e. Data/Backups/Logs) as it sets these as predefined names within source code.
@@ -34,7 +45,7 @@ error: file not found - indicates that the file that user is attempting to resto
 
 error: could not locate client - client information could not be found, therefore it does not exist in current repository of names
 
-fatal: invalid JSON format (filename.json) - occurs when given JSON file is not formatted correctly and cannot be parsed. For reference, use to default github JSON files or reformat manually
-
 error: file restore error - file is not in a supported format (i.e. file is not JSON and uses an unknown or invalid extension)
 
+fatal: invalid JSON format (filename.json) - occurs when given JSON file is not formatted correctly and cannot be parsed. 
+This error is fatal and terminates execution. For reference, use default github JSON files or reformat manually
