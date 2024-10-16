@@ -1,24 +1,7 @@
 {
-    "data_entries": [
-        {
-            "e": {
-                "client": "e",
-                "username": "e",
-                "password": "e",
-                "url": "e"
-            }
-        },
-        {
-            "fuck": {
-                "client": "fuck",
-                "username": "you",
-                "password": "seth",
-                "url": "tobin"
-            }
-        }
-    ],
-    "backup_path": "/Users/mateo/Desktop/MYLogin/backups",
-    "date_created": "2024-10-15 19:15:30.748483",
+    "data_entries": [],
+    "backup_path": "",
+    "date_created": "",
     "ID": "0",
-    "LOGS": "F"
+    "LOGS": "T"
 }

@@ -8,7 +8,12 @@ user_info = str(os.getcwd()) + "/.data/user.json"
 data_name = str(os.getcwd()) + "/.data/data.json"
 log_path = str(os.getcwd()) + "/logs"
 
-changelist = ["Access at " + str(datetime.datetime.now())]
+changelist = ["access at " + str(datetime.datetime.now())]
+
+if not os.path.exists(user_info):
+
+        print("fatal: data folder does not exist or cannot be located")
+        exit(0)
 
 try:
 
@@ -21,7 +26,6 @@ except:
 
     print("fatal: invalid JSON format (data.json). terminated")
     exit()
-
 
 def clear() -> None: #clears console and checks to see what os is being used
 
@@ -68,6 +72,9 @@ def default() -> None:
                         with open(data_name, 'w') as write_data:
 
                                 json.dump(default_data, write_data, indent =4)
+
+                print("defaulted to base settings. terminate")
+                exit()
 
 def configure_user() -> str:
 
@@ -143,7 +150,7 @@ def help() -> None:
         print("rm - removes a specified cient password pair from dictionary [shortcut -> rm <client> removes specified client]")
         print("edit - change a pre-existing information with an associated client - flags: [-username] [-password] [-url] default [-password]")
         print("kill-all - deletes all currently existing client-password pairs held within data file")
-        print("default - reset data folder")
+        print("default - reset data folder and terminates execution prematurely - [DEV TOOL]")
         print("clear/cls - clear screen")
         print("backup - writes current data to a new backup to be stored in backups folder")
         print("restore - restores data from a given backup")
@@ -156,7 +163,7 @@ def help() -> None:
 def info() -> None:
         
         print("MyLogin (Build 0)\nDate Started: 06/06/2024\nDate Finalized: 10/13/2024")
-        print("Notes: Finished local build repository via JSON storage. Allows for Read-Write operations as well as version control options. Next will be information transfer via Sockets\n")
+        print("Notes: Finished local build repository via JSON storage. Allows for Read-Write operations as well as version control options. Next will be encryption of data\n")
         print("Written by matesuu")
         print("Fibonacci Yeah! (>_<)")
 
@@ -296,7 +303,7 @@ def create() -> None:
                         outfile.seek(0)
                         json.dump(outfile_data, outfile, indent=4)
 
-                        changelist.append("\nCreated New Client " + cleaned_client + " at " + str(datetime.datetime.now()))
+                        changelist.append("\ncreated new client " + cleaned_client + " at " + str(datetime.datetime.now()))
                 
         else:
 
@@ -322,7 +329,7 @@ def remove() -> None:
                                 curr_data['data_entries'].remove(entry)
                                 flag = True
 
-                                changelist.append("\nRemoved Client " + i['client'] + " at " + str(datetime.datetime.now()))
+                                changelist.append("\nremoved client " + i['client'] + " at " + str(datetime.datetime.now()))
 
                                 break
 
@@ -354,7 +361,7 @@ def remove_arg(arg) -> None:
                                 curr_data['data_entries'].remove(entry)
                                 flag = True
 
-                                changelist.append("\nRemoved Client " + i['client'] + " at " + str(datetime.datetime.now()))
+                                changelist.append("\nremoved client " + i['client'] + " at " + str(datetime.datetime.now()))
 
                                 break
 
@@ -392,7 +399,7 @@ def edit_username() -> None:
                                 i['username'] = clean_pass
                                 flag = True
 
-                                changelist.append("\nEdited " + i['client'] + " Username From " + old + " to " + clean_pass + " at " + str(datetime.datetime.now()))
+                                changelist.append("\nedited " + i['client'] + " username from " + old + " to " + clean_pass + " at " + str(datetime.datetime.now()))
 
                                 break
 
@@ -430,7 +437,7 @@ def edit_password() -> None:
                                 i['password'] = clean_pass
                                 flag = True
 
-                                changelist.append("\nEdited " + i['client'] + " Password From " + old + " to " + clean_pass + " at " + str(datetime.datetime.now()))
+                                changelist.append("\nedited " + i['client'] + " password from " + old + " to " + clean_pass + " at " + str(datetime.datetime.now()))
 
                                 break
 
@@ -468,7 +475,7 @@ def edit_url() -> None:
                                 i['url'] = clean_pass
                                 flag = True
 
-                                changelist.append("\nEdited " + i['client'] + " URL From " + old + " to " + clean_pass + " at " + str(datetime.datetime.now()))
+                                changelist.append("\nedited " + i['client'] + " URL from " + old + " to " + clean_pass + " at " + str(datetime.datetime.now()))
 
                                 break
 
@@ -507,7 +514,7 @@ def reset() -> None:
         if flag == True:
                 
                 print("deleted everything")
-                changelist.append("\nDeleted All Entries at " + str(datetime.datetime.now()))
+                changelist.append("\ndeleted all entries at " + str(datetime.datetime.now()))
 
         else:
                 print("process aborted")
@@ -530,7 +537,15 @@ def backup() -> None:
                         
                 json.dump(data, update_id, indent=4)
 
+        
+
         path = data['backup_path']                      # gets path of backup folder
+
+        if not os.path.exists(path):
+
+                print('error: backups folder does not exist or cannot be located')
+                return 
+
         data['date_created'] = str(datetime.datetime.now())     # stores the date of creation in 'date_created' as a string
         
 
@@ -550,14 +565,21 @@ def backup() -> None:
 
                 json.dump(data, json_file, indent=4)
         
-        changelist.append("\nData Backup at " + str(datetime.datetime.now()))
+        changelist.append("\ndata backup at " + str(datetime.datetime.now()))
 
 def restore() -> None:
 
         with open(data_name) as get_path:
             path_data = json.load(get_path)
 
+            if not os.path.exists(path_data['backup_path']):
+
+                print("error: backups folder does not exist or cannot be located")
+                
+                return 
+
         dir_list = os.listdir(path_data['backup_path'])
+
         print(dir_list)
 
         new_master = int(path_data['ID'])
@@ -569,7 +591,7 @@ def restore() -> None:
         try:
                 with open(path_data['backup_path'] + '/' + backup_file) as json_file:
                         backup_data = json.load(json_file)
-                        changelist.append("\nRestored Data From Backup" + backup_file + " at " + str(datetime.datetime.now()))
+                        changelist.append("\nrestored data from " + backup_file + " at " + str(datetime.datetime.now()))
                         
                 backup_data['ID'] = str(new_master)
                 
@@ -611,7 +633,7 @@ def disable() -> None:
 
 def icon() -> None:
 
-        
+        print("\033[32m", end = "")
         print(r"""
                             _
  __  ___    ___            |+|                       
@@ -620,6 +642,7 @@ def icon() -> None:
 |_|  |_| |_| |____|___\__, |_|_||_|
                       |___/ 
         """) # prints icon
+        print("\033[0m", end = "")
 
 def check_argument(string) -> None:
 
@@ -656,7 +679,6 @@ def check_argument(string) -> None:
                         remove_arg(arg)
                 case 2:
                         search_arg(arg)
-
                 case _:
                         invalid_argument()
         
@@ -672,13 +694,14 @@ def invalid_argument() -> None:
 my_username = configure_user()
 configure_data()
 
+
 print("<STARTING> MYLogin 1.0")
 
 menu()
 
 while True:
 
-        user_input = input(my_username + ":~$ ")
+        user_input = input(f"\033[36m" + my_username + ":~$ \033[0m")
 
         if len(user_input.split()) == 1:
 
@@ -759,7 +782,7 @@ with open (data_name) as log_flag:
 
         f = json.load(log_flag)
 
-if(f['LOGS'] == "T"):
+if(f['LOGS'] == "T" and os.path.exists(log_path)):
 
         log = open(log_path + "/Log " + str(datetime.datetime.now()) + ".txt", 'a')
     
@@ -767,7 +790,7 @@ if(f['LOGS'] == "T"):
 
                 log.write(changelist[i])
         
-        log.write("\nTerminated Use at " + str(datetime.datetime.now()))
+        log.write("\nterminated use at " + str(datetime.datetime.now()))
 
         log.close()
 
