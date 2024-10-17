@@ -689,7 +689,7 @@ def backup() -> None:
 
         else:
             
-            new_json = open(path + '/backup-' + str(new_id) + '.json', 'x').close()
+            new_json = open(path + '/backup(' + str(new_id) + ').json', 'x').close()
             
             with open(path + '/backup-' + str(new_id) + '.json', 'w') as json_file:
 
