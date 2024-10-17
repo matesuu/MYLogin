@@ -153,7 +153,7 @@ def help() -> None:
         print("fetch - returns all associated login information with a given client [shortcut -> fetch <client> fetches specified client]")
         print("new - creates a new client-information pair in dictionary - flags: Optional: [-all]")
         print("rm - removes a specified cient password pair from dictionary [shortcut -> rm <client> removes specified client]")
-        print("edit - change a pre-existing information with an associated client - flags: [edit-username] [edit-password] [edit-url] default [edit-password]")
+        print("edit - change a pre-existing information with an associated client - flags: [edit-username] [edit-password] [edit-url] default [edit-password] -> takes arguments")
         print("kill-all - deletes all currently existing client-password pairs held within data file")
         print("default - reset data folder and terminates execution prematurely - [DEV TOOL]")
         print("clear/cls - clear screen")
@@ -422,10 +422,89 @@ def edit_username() -> None:
         if flag == False:
 
                 print("error: could not locate client")
+
+
+def edit_username_arg(arg) -> None:
+
+        user_input = arg
+        cleaned_input = user_input.replace(' ', '')
+
+        flag = False
+
+        with open(data_name) as file:
+
+                data = json.load(file)
+
+        for entry in data['data_entries']:
+                
+                for i in entry.values():
+                        
+                        if cleaned_input == i['client']:
+                                
+                                print(i['client'])
+                                old = i['username']
+                                edited_value = i['client']
+                                new_pass = input("username > ")
+                                clean_pass = new_pass.replace(' ', '')
+                                i['username'] = clean_pass
+                                flag = True
+
+                                changelist.append("\nedited " + i['client'] + " username from " + old + " to " + clean_pass + " at " + str(datetime.datetime.now()))
+
+                                break
+
+        with open(data_name, 'w') as json_file:
+            
+            json.dump(data, json_file, indent=4)
+       
+        
+        if flag == False:
+
+                print("error: could not locate client")
         
 def edit_password() -> None:
 
         user_input = input("client > ")
+        cleaned_input = user_input.replace(' ', '')
+
+        flag = False
+
+
+        with open(data_name) as file:
+
+                data = json.load(file)
+
+        for entry in data['data_entries']:
+                
+                for i in entry.values():
+                        
+                        if cleaned_input == i['client']:
+                                
+                                print(i['client'])
+                                old = i['password']
+                                edited_value = i['client']
+                                new_pass = input("password > ")
+                                clean_pass = new_pass.replace(' ', '')
+                                i['password'] = clean_pass
+                                flag = True
+
+                                changelist.append("\nedited " + i['client'] + " password from " + old + " to " + clean_pass + " at " + str(datetime.datetime.now()))
+
+                                break
+
+        with open(data_name, 'w') as json_file:
+            
+            json.dump(data, json_file, indent=4)
+       
+        
+        if flag == False:
+
+                print("error: could not locate client")
+
+
+def edit_password_arg(arg) -> None:
+
+        user_input = arg
         cleaned_input = user_input.replace(' ', '')
 
         flag = False
@@ -498,6 +577,46 @@ def edit_url() -> None:
         if flag == False:
 
                 print("error: could not locate client")
+
+
+def edit_url_arg(arg) -> None:
+
+        user_input = arg
+        cleaned_input = user_input.replace(' ', '')
+
+        flag = False
+
+        with open(data_name) as file:
+
+                data = json.load(file)
+
+        for entry in data['data_entries']:
+                
+                for i in entry.values():
+                        
+                        if cleaned_input == i['client']:
+                                
+                                print(i['client'])
+                                old = i['url']
+                                edited_value = i['client']
+                                new_pass = input("url > ")
+                                clean_pass = new_pass.replace(' ', '')
+                                i['url'] = clean_pass
+                                flag = True
+
+                                changelist.append("\nedited " + i['client'] + " URL from " + old + " to " + clean_pass + " at " + str(datetime.datetime.now()))
+
+                                break
+
+        with open(data_name, 'w') as json_file:
+            
+            json.dump(data, json_file, indent=4)
+       
+        
+        if flag == False:
+
+                print("error: could not locate client")
+
 
 def reset() -> None:
         
@@ -616,6 +735,46 @@ def restore() -> None:
         except:
                 
                 print("error: file error")
+
+
+def restore_arg(arg) -> None:
+
+        with open(data_name) as get_path:
+
+                path_data = json.load(get_path)
+
+                if not os.path.exists(path_data['backup_path']):
+
+                        print("error: backups folder does not exist or cannot be located")
+                
+                        return 
+
+        dir_list = os.listdir(path_data['backup_path'])
+        new_master = int(path_data['ID'])
+        backup_file = ""
+        
+        for i in range(1, len(arg)):
+
+                backup_file = backup_file + arg[i]
+        
+        #note: have to handle case where inputted string is not a valid file... try catch block maybe?
+
+        try:
+                with open(path_data['backup_path'] + '/' + backup_file) as json_file:
+                        backup_data = json.load(json_file)
+                        changelist.append("\nrestored data from " + backup_file + " at " + str(datetime.datetime.now()))
+                        
+                backup_data['ID'] = str(new_master)
+                
+                with open(data_name, 'w') as restored_file:
+                        json.dump(backup_data, restored_file, indent=4)
+                        
+                print("restored from file")
+
+        except:
+                
+                print("error: file error")
+
         
 
 def enable() -> None:
@@ -663,7 +822,7 @@ def icon() -> None:
 
 def check_argument(string) -> None:
 
-        # valid: rm or fetch
+        # valid: rm, fetch, restore, edit
         op = 0
         c = 0
         command = ""
@@ -696,6 +855,17 @@ def check_argument(string) -> None:
                         remove_arg(arg)
                 case 'fetch':
                         search_arg(arg)
+                case 'restore':
+                        restore_arg(arg)
+                case 'edit-username':
+                        edit_username_arg(arg)
+                case 'edit-password':
+                        edit_password_arg(arg)
+                case 'edit-url':
+                        edit_url_arg(arg)
+
+                case 'edit-url':
+                        edit_password_arg(arg)
                 case _:
                         invalid_argument()
         
@@ -703,8 +873,6 @@ def check_argument(string) -> None:
 def invalid_argument() -> None:
         
         print("error: command not found. For a list of supported comamnds, enter 'help' to console.")
-
-
 
 # MAIN
 
