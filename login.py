@@ -12,7 +12,9 @@ changelist = ["access at " + str(datetime.datetime.now())]
 
 if not os.path.exists(user_info):
 
+        print("\033[31m", end = "")
         print("fatal: data folder does not exist or cannot be located")
+        print("\033[30m", end = "")
         exit(0)
 
 try:
@@ -24,7 +26,9 @@ try:
 
 except:
 
+    print("\033[31m", end = "")
     print("fatal: invalid JSON format (data.json). terminated")
+    print("\033[0m", end = "")
     exit()
 
 def clear() -> None: #clears console and checks to see what os is being used
@@ -100,8 +104,9 @@ def configure_user() -> str:
                             json.dump(this_user, temp, indent=4)
 
         except:
-
+                print("\033[31m", end = "")
                 print("fatal: invalid JSON format (user.json). terminated")
+                print("\033[0m", end = "")
                 exit()
 
         return my_name
@@ -148,7 +153,7 @@ def help() -> None:
         print("fetch - returns all associated login information with a given client [shortcut -> fetch <client> fetches specified client]")
         print("new - creates a new client-information pair in dictionary - flags: Optional: [-all]")
         print("rm - removes a specified cient password pair from dictionary [shortcut -> rm <client> removes specified client]")
-        print("edit - change a pre-existing information with an associated client - flags: [-username] [-password] [-url] default [-password]")
+        print("edit - change a pre-existing information with an associated client - flags: [edit-username] [edit-password] [edit-url] default [edit-password]")
         print("kill-all - deletes all currently existing client-password pairs held within data file")
         print("default - reset data folder and terminates execution prematurely - [DEV TOOL]")
         print("clear/cls - clear screen")
@@ -176,8 +181,10 @@ def display() -> None:
         for client in clients['data_entries']:
 
                 for names in client.values():
-                
+
+                        print("\033[34m", end = "")
                         print(names['client'])
+                        print("\033[0m", end = "")
 
 def search() -> None:
 
@@ -196,17 +203,18 @@ def search() -> None:
 
                         if cleaned_input == keys['client']:
 
-                                print("")
+                                print("\033[34m", end = "")
                                 print("client ~ " + keys['client'])
                                 print("username ~ " + keys['username'])
                                 print("password ~ " + keys['password'])
                                 print("url ~ " + keys['url'])
+                                print("\033[0m", end = "")
                                 flag = True
                                 
 
         if flag == False:
             
-                print("error: could not locate client", end = "")
+                print("error: could not locate client")
 
         print("")
                 
@@ -228,11 +236,12 @@ def search_arg(arg):
 
                         if cleaned_input == keys['client']:
 
-                                print("")
+                                print("\033[34m", end = "")
                                 print("client ~ " + keys['client'])
                                 print("username ~ " + keys['username'])
                                 print("password ~ " + keys['password'])
                                 print("url ~ " + keys['url'])
+                                print("\033[0m", end = "")
                                 flag = True
                                 
 
@@ -252,10 +261,12 @@ def search_all() -> None:
 
                 for keys in local_dicts.values():
 
+                        print("\033[34m", end = "")
                         print("\nclient ~ " + keys['client'])
                         print("username ~ " + keys['username'])
                         print("password ~ " + keys['password'])
                         print("url ~ " + keys['url'])
+                        print("\033[0m", end = "")
         print("")
 
 
@@ -580,7 +591,9 @@ def restore() -> None:
 
         dir_list = os.listdir(path_data['backup_path'])
 
+        print("\033[34m", end = "")
         print(dir_list)
+        print("\033[0m", end = "")
 
         new_master = int(path_data['ID'])
         
@@ -633,51 +646,53 @@ def disable() -> None:
 
 def icon() -> None:
 
-        print("\033[32m", end = "")
+        print("\033[35m", end = "")
         print(r"""
-                            _
- __  ___    ___            |+|                       
-|  \/  \ \ / / |   ___ __ _ _ _ _
-| |\/| |\ V /| |__| _ / _` | | '  \                        
-|_|  |_| |_| |____|___\__, |_|_||_|
-                      |___/ 
+---------------------------------------
+|                             _       |
+|  __  ___    ___            |+|      |                 
+| |  \/  \ \ / / |   ___ __ _ _ _ _   |
+| | |\/| |\ V /| |__| _ / _` | | '  \ |                      
+| |_|  |_| |_| |____|___\__, |_|_||_| |
+|                       |___/         |
+---------------------------------------
         """) # prints icon
         print("\033[0m", end = "")
 
 def check_argument(string) -> None:
 
         # valid: rm or fetch
-        string.replace(' ', '')
         op = 0
         c = 0
         command = ""
         arg = ""
+        cFlag = False
 
         for i in range(0, len(string)):
-
-                if command == "rm":
-                        
-                        op = 1
-                        break
-
-                if command == "fetch":
-
-                        op = 2
-                        break
                 
-                command = command + string[i]
-                c = c + 1
-        
+                if string[i] == " " and cFlag == False:  
+
+                        continue
+
+                elif string[i] == " " and cFlag == True:
+
+                        break
+                else:
+                        cFlag = True
+                        command = command + string[i]
+                        c = c + 1
+
         for i in range(c, len(string)):
 
                 arg = arg + string[i]
 
+        arg.replace(' ', '')
         
-        match op:
+        match command:
 
-                case 1:
+                case 'rm':
                         remove_arg(arg)
-                case 2:
+                case 'fetch':
                         search_arg(arg)
                 case _:
                         invalid_argument()
@@ -701,7 +716,7 @@ menu()
 
 while True:
 
-        user_input = input(f"\033[36m" + my_username + ":~$ \033[0m")
+        user_input = input(f"\033[32m" + my_username + ":~$ \033[0m")
 
         if len(user_input.split()) == 1:
 
@@ -733,13 +748,13 @@ while True:
                 case "edit":
                         edit_password()
 
-                case "edit -username":
+                case "edit-username":
                         edit_username()
                     
-                case "edit -password":
+                case "edit-password":
                         edit_password()
 
-                case "edit -url":
+                case "edit-url":
                         edit_url()
                         
                 case "kill-all":
