@@ -681,9 +681,9 @@ def backup() -> None:
 
         if os.path.exists(path +  str(new_id) + '.json'):
 
-            new_json = open(path + '/backup-' + str(datetime.datetime.now()) + '.json', 'x').close()
+            new_json = open(path + '/backup(' + str(datetime.datetime.now()) + ').json', 'x').close()
             
-            with open(path + 'backup-' + str(datetime.datetime.now()) + '.json', 'w') as json_file:
+            with open(path + 'backup(' + str(datetime.datetime.now()) + ').json', 'w') as json_file:
 
                 json.dump(data, json_file, indent=4)
 
@@ -691,7 +691,7 @@ def backup() -> None:
             
             new_json = open(path + '/backup(' + str(new_id) + ').json', 'x').close()
             
-            with open(path + '/backup-' + str(new_id) + '.json', 'w') as json_file:
+            with open(path + '/backup(' + str(new_id) + ').json', 'w') as json_file:
 
                 json.dump(data, json_file, indent=4)
         
