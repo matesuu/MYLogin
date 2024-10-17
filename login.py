@@ -616,7 +616,7 @@ def restore() -> None:
         except:
                 
                 print("error: file error")
-
+        
 
 def enable() -> None:
 
@@ -642,21 +642,23 @@ def disable() -> None:
     with open(data_name, 'w') as finish_disable:
 
         json.dump(d, finish_disable, indent=4)
-    
+
 
 def icon() -> None:
 
+
         print("\033[35m", end = "")
         print(r"""
----------------------------------------
-|                             _       |
-|  __  ___    ___            |+|      |                 
-| |  \/  \ \ / / |   ___ __ _ _ _ _   |
-| | |\/| |\ V /| |__| _ / _` | | '  \ |                      
-| |_|  |_| |_| |____|___\__, |_|_||_| |
-|                       |___/         |
----------------------------------------
-        """) # prints icon
+                                                                                ---------------------------------------
+                                                                                |                             _       |
+                                                                                |  __  ___    ___            |+|      |                 
+                                                                                | |  \/  \ \ / / |   ___ __ _ _ _ _   |
+                                                                                | | |\/| |\ V /| |__| _ / _` | | '  \ |                      
+                                                                                | |_|  |_| |_| |____|___\__, |_|_||_| |
+                                                                                |                       |___/         |
+                                                                                ---------------------------------------
+        """)# prints icon
+
         print("\033[0m", end = "")
 
 def check_argument(string) -> None:
@@ -736,7 +738,7 @@ while True:
                 case "fetch":
                         search()
 
-                case "fetch -all":
+                case "fetch-all":
                         search_all()
                         
                 case "new":
@@ -808,5 +810,6 @@ if(f['LOGS'] == "T" and os.path.exists(log_path)):
         log.write("\nterminated use at " + str(datetime.datetime.now()))
 
         log.close()
+
 
 print("terminated use at " + str(datetime.datetime.now()))
