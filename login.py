@@ -170,7 +170,6 @@ def info() -> None:
         print("MyLogin (Build 0)\nDate Started: 06/06/2024\nDate Finalized: 10/13/2024")
         print("Notes: Finished local build repository via JSON storage. Allows for Read-Write operations as well as version control options. Next will be encryption of data\n")
         print("Written by matesuu")
-        print("Fibonacci Yeah! (>_<)")
 
 
 def display() -> None:
