@@ -71,7 +71,7 @@ def default() -> None:
                         default_data['backup_path'] = ""
                         default_data['date_created'] = ""
                         default_data['ID'] = "0"
-                        default_data['LOGS'] = "T"
+                        default_data['LOGS'] = "F"
 
                         with open(data_name, 'w') as write_data:
 
