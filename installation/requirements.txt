@@ -1,13 +1,14 @@
-!!! IGNORE THIS FILE FOR NOW YOU DON'T NEED IT THIS FOLDER TO RUN !!!
-
 Requirements:
 
-Requires a external depedency "cryptography"
 
-FOR MAC AND LINUX:
+1. Python3
+2. cryptography module (external dependency)
 
-run bash.sh (dont forget to chmod +x bash.sh)
 
-FOR WINDOWS:
+Mac/Linux:
 
-the dependency is avaiable as a zip file in installation folder
+Run packages.sh (dont forget to chmod +x bash.sh)
+
+Windows:
+
+For more details on module installation see https://pypi.org/project/cryptography/#files
