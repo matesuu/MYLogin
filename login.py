@@ -1,13 +1,13 @@
 #Welcome to the MYLogin project.
-
-import os
 import json
+import os
 import datetime
 from cryptography.fernet import Fernet
 
-user_info = str(os.getcwd()) + "/.data/user.json"
+user_info = str(os.getcwd()) + "/.data/.user.json"
 data_name = str(os.getcwd()) + "/.data/data.json"
 log_path = str(os.getcwd()) + "/logs"
+backups_path = str(os.getcwd()) + "/backups"
 
 changelist = ["access at " + str(datetime.datetime.now())]
 
@@ -32,6 +32,9 @@ except:
     print("\033[0m", end = "")
     exit()
 
+
+
+
 def clear() -> None: #clears console and checks to see what os is being used
 
         if os.name == 'nt': # windows
@@ -55,6 +58,7 @@ def default() -> None:
 
                         default_user['user'] = ""
                         default_user['val'] = ""
+                        default_user['file'] = ""
         
                         with open(user_info, 'w') as write_user:
 
@@ -86,8 +90,10 @@ def configure_user() -> list:
 
         my_name = ""
         my_h = ""
+        my_f = ""
 
         key = Fernet.generate_key()
+        file = Fernet.generate_key()
 
         try:
 
@@ -118,6 +124,18 @@ def configure_user() -> list:
 
                         json.dump(this_user, temp, indent=4)
 
+                if this_user['file'] == "":
+
+                        this_user['file'] = file.decode('utf-8')
+
+                else:
+                        
+                        my_f = this_user['file']
+
+                with open(user_info, 'w') as temp:
+
+                        json.dump(this_user, temp, indent=4)
+
         except:
                 print("\033[31m", end = "")
                 print("fatal: invalid JSON format (user.json). terminated")
@@ -136,7 +154,7 @@ def configure_data() -> None: # gets username and path used for backups
 
                 if this_data['backup_path'] == "":
 
-                        cleaned_path = str(os.getcwd()) + "/backups"
+                        cleaned_path = backups_path
                         this_data['backup_path'] = cleaned_path
 
                 if this_data['date_created'] == "":
@@ -189,7 +207,7 @@ def info() -> None:
         print("\nWritten by matesuu")
 
 
-def display() -> None:
+def display(cipher) -> None:
     
         with open(data_name) as outfile:
                 clients = json.load(outfile)
@@ -198,8 +216,12 @@ def display() -> None:
 
                 for names in client.values():
 
+                        encoded_name = names['client'].encode('utf-8')
+                        decrypted_name = cipher.decrypt(encoded_name)
+                        decoded_name = decrypted_name.decode('utf-8')
+
                         print("\033[34m", end = "")
-                        print(names['client'])
+                        print(decoded_name)
                         print("\033[0m", end = "")
 
 def search(cipher) -> None:
@@ -217,10 +239,14 @@ def search(cipher) -> None:
 
                 for keys in local_dicts.values():
 
-                        if cleaned_input == keys['client']:
+                        encoded_client = keys['client'].encode('utf-8')
+                        decrypted_client = cipher.decrypt(encoded_client)
+                        decoded_client = decrypted_client.decode('utf-8')
+
+                        if cleaned_input == decoded_client:
 
                                 print("\033[34m", end = "")
-                                print("client ~ " + keys['client'])
+                                print("client ~ " + decoded_client)
 
                                 encoded_username = keys['username'].encode('utf-8')
                                 encoded_password = keys['password'].encode('utf-8')
@@ -264,10 +290,14 @@ def search_arg(arg, cipher):
 
                 for keys in local_dicts.values():
 
-                        if cleaned_input == keys['client']:
+                        encoded_client = keys['client'].encode('utf-8')
+                        decrypted_client = cipher.decrypt(encoded_client)
+                        decoded_client = decrypted_client.decode('utf-8')
+
+                        if cleaned_input == decoded_client:
 
                                 print("\033[34m", end = "")
-                                print("client ~ " + keys['client'])
+                                print("client ~ " + decoded_client)
 
                 
                                 encoded_username = keys['username'].encode('utf-8')
@@ -308,7 +338,12 @@ def search_all(cipher) -> None:
 
                         print("\033[34m", end = "")
                         print("")
-                        print("client ~ " + keys['client'])
+
+                        encoded_client = keys['client'].encode('utf-8')
+                        decrypted_client = cipher.decrypt(encoded_client)
+                        decoded_client = decrypted_client.decode('utf-8')
+
+                        print("client ~ " + decoded_client)
 
                         encoded_username = keys['username'].encode('utf-8')
                         encoded_password = keys['password'].encode('utf-8')
@@ -334,6 +369,7 @@ def create(cipher) -> None:
         
 
         flag = False
+        size = 0
 
         with open(data_name) as check_file:
                 check_data = json.load(check_file)
@@ -345,6 +381,8 @@ def create(cipher) -> None:
         for entry in check_data['data_entries']:
 
                 for i in entry.values():
+                        
+                        size = size + 1
 
                         if cleaned_client == i['client']:
 
@@ -364,6 +402,10 @@ def create(cipher) -> None:
                 cleaned_username = new_username.replace(' ','')
                 cleaned_password = new_password.replace(' ','')
 
+                encoded_client = cleaned_client.encode('utf-8')
+                encrypted_client = cipher.encrypt(encoded_client)
+                decoded_client = encrypted_client.decode('utf-8')
+
                 encoded_username = cleaned_username.encode('utf-8')
                 encoded_password = cleaned_password.encode('utf-8')
                 encoded_url = new_url.encode('utf-8')
@@ -375,9 +417,13 @@ def create(cipher) -> None:
                 decoded_username = encrypted_username.decode('utf-8')
                 decoded_password = encrypted_password.decode('utf-8')
                 decoded_url = encrypted_url.decode('utf-8')
+
+                encoded_date = (str(datetime.datetime.now())).encode('utf-8')
+                encrypted_date = cipher.encrypt(encoded_date)
+                decoded_date = encrypted_date.decode('utf-8')
                 
-                new_entry = {"client" : cleaned_client, "username" : decoded_username, "password" : decoded_password, "url" : decoded_url}
-                new_dict = {cleaned_client : new_entry}
+                new_entry = {"client" : decoded_client, "username" : decoded_username, "password" : decoded_password, "url" : decoded_url}
+                new_dict = {decoded_date: new_entry}
         
                 with open(data_name, 'r+') as outfile:
                         
@@ -392,7 +438,7 @@ def create(cipher) -> None:
 
                 print("error: client already exists in directory")
 
-def remove() -> None:
+def remove(cipher) -> None:
 
         user_input = input("client > ")
         cleaned_input = user_input.replace(' ','')
@@ -405,14 +451,18 @@ def remove() -> None:
         for entry in curr_data['data_entries']:
                 
                 for i in entry.values():
-                        
-                        if cleaned_input == i['client']:
 
-                                removed_value = i['client']
+                        encoded_client = i['client'].encode('utf-8')
+                        decrypted_client = cipher.decrypt(encoded_client)
+                        decoded_client = decrypted_client.decode('utf-8')
+
+                        if cleaned_input == decoded_client:
+
+                                removed_value = decoded_client
                                 curr_data['data_entries'].remove(entry)
                                 flag = True
 
-                                changelist.append("\nremoved client " + i['client'] + " at " + str(datetime.datetime.now()))
+                                changelist.append("\nremoved client " + decoded_client + " at " + str(datetime.datetime.now()))
 
                                 break
 
@@ -424,7 +474,7 @@ def remove() -> None:
                 print("error: could not locate client")
 
         
-def remove_arg(arg) -> None:
+def remove_arg(arg, cipher) -> None:
 
         user_input = arg
         cleaned_input = user_input.replace(' ', '')
@@ -437,14 +487,18 @@ def remove_arg(arg) -> None:
         for entry in curr_data['data_entries']:
                 
                 for i in entry.values():
-                        
-                        if cleaned_input == i['client']:
 
-                                removed_value = i['client']
+                        encoded_client = i['client'].encode('utf-8')
+                        decrypted_client = cipher.decrypt(encoded_client)
+                        decoded_client = decrypted_client.decode('utf-8')
+
+                        if cleaned_input == decoded_client:
+
+                                removed_value = decoded_client
                                 curr_data['data_entries'].remove(entry)
                                 flag = True
 
-                                changelist.append("\nremoved client " + i['client'] + " at " + str(datetime.datetime.now()))
+                                changelist.append("\nremoved client " + decoded_client + " at " + str(datetime.datetime.now()))
 
                                 break
 
@@ -471,10 +525,14 @@ def edit_username(cipher) -> None:
         for entry in data['data_entries']:
                 
                 for i in entry.values():
+
+                        encoded_client = i['client'].encode('utf-8')
+                        decrypted_client = cipher.decrypt(encoded_client)
+                        decoded_client = decrypted_client.decode('utf-8')
                         
-                        if cleaned_input == i['client']:
+                        if cleaned_input == decoded_client:
                                 
-                                print(i['client'])
+                                print(decoded_client)
 
                                 encoded_username_old = i['username'].encode('utf-8')
                                 decrypted_username_old = cipher.decrypt(encoded_username_old)
@@ -490,7 +548,7 @@ def edit_username(cipher) -> None:
                                 i['username'] = decoded_username_new
                                 flag = True
 
-                                changelist.append("\nedited " + i['client'] + " username from " + decoded_username_old + " to " + decoded_username_new + " at " + str(datetime.datetime.now()))
+                                changelist.append("\nedited " + decoded_client + " username from " + decoded_username_old + " to " + clean_pass + " at " + str(datetime.datetime.now()))
 
                                 break
 
@@ -518,10 +576,14 @@ def edit_username_arg(arg, cipher) -> None:
         for entry in data['data_entries']:
                 
                 for i in entry.values():
+
+                        encoded_client = i['client'].encode('utf-8')
+                        decrypted_client = cipher.decrypt(encoded_client)
+                        decoded_client = decrypted_client.decode('utf-8')
                         
-                        if cleaned_input == i['client']:
+                        if cleaned_input == decoded_client:
                                 
-                                print(i['client'])
+                                print(decoded_client)
 
                                 encoded_username_old = i['username'].encode('utf-8')
                                 decrypted_username_old = cipher.decrypt(encoded_username_old)
@@ -537,7 +599,7 @@ def edit_username_arg(arg, cipher) -> None:
                                 i['username'] = decoded_username_new
                                 flag = True
 
-                                changelist.append("\nedited " + i['client'] + " username from " + decoded_username_old + " to " + decoded_username_new + " at " + str(datetime.datetime.now()))
+                                changelist.append("\nedited " + i['client'] + " username from " + decoded_username_old + " to " + clean_pass + " at " + str(datetime.datetime.now()))
                                 break
 
         with open(data_name, 'w') as json_file:
@@ -565,9 +627,13 @@ def edit_password(cipher) -> None:
                 
                 for i in entry.values():
                         
-                        if cleaned_input == i['client']:
+                        encoded_client = i['client'].encode('utf-8')
+                        decrypted_client = cipher.decrypt(encoded_client)
+                        decoded_client = decrypted_client.decode('utf-8')
+
+                        if cleaned_input == decoded_client:
                                 
-                                print(i['client'])
+                                print(decoded_client)
 
                                 encoded_username_old = i['password'].encode('utf-8')
                                 decrypted_username_old = cipher.decrypt(encoded_username_old)
@@ -583,7 +649,7 @@ def edit_password(cipher) -> None:
                                 i['password'] = decoded_password_new
                                 flag = True
 
-                                changelist.append("\nedited " + i['client'] + " password from " + decoded_password_old + " to " + decoded_password_new + " at " + str(datetime.datetime.now()))
+                                changelist.append("\nedited " + i['client'] + " password from " + decoded_password_old + " to " + clean_pass + " at " + str(datetime.datetime.now()))
 
                                 break
 
@@ -611,10 +677,14 @@ def edit_password_arg(arg, cipher) -> None:
         for entry in data['data_entries']:
                 
                 for i in entry.values():
+
+                        encoded_client = i['client'].encode('utf-8')
+                        decrypted_client = cipher.decrypt(encoded_client)
+                        decoded_client = decrypted_client.decode('utf-8')
                         
-                        if cleaned_input == i['client']:
+                        if cleaned_input == decoded_client:
                                 
-                                print(i['client'])
+                                print(decoded_client)
 
                                 encoded_username_old = i['password'].encode('utf-8')
                                 decrypted_username_old = cipher.decrypt(encoded_username_old)
@@ -630,7 +700,7 @@ def edit_password_arg(arg, cipher) -> None:
                                 i['password'] = decoded_password_new
                                 flag = True
 
-                                changelist.append("\nedited " + i['client'] + " password from " + decoded_password_old + " to " + decoded_password_new + " at " + str(datetime.datetime.now()))
+                                changelist.append("\nedited " + i['client'] + " password from " + decoded_password_old + " to " + clean_pass + " at " + str(datetime.datetime.now()))
 
                                 break
 
@@ -657,10 +727,14 @@ def edit_url(cipher) -> None:
         for entry in data['data_entries']:
                 
                 for i in entry.values():
+
+                        encoded_client = i['client'].encode('utf-8')
+                        decrypted_client = cipher.decrypt(encoded_client)
+                        decoded_client = decrypted_client.decode('utf-8')
                         
-                        if cleaned_input == i['client']:
+                        if cleaned_input == decoded_client:
                                 
-                                print(i['client'])
+                                print(decoded_client)
                                 
                                 encoded_url_old = i['url'].encode('utf-8')
                                 decrypted_url_old = cipher.decrypt(encoded_url_old)
@@ -676,7 +750,7 @@ def edit_url(cipher) -> None:
                                 i['url'] = decoded_url_new
                                 flag = True
 
-                                changelist.append("\nedited " + i['client'] + " URL from " + decoded_url_old + " to " + decoded_url_new + " at " + str(datetime.datetime.now()))
+                                changelist.append("\nedited " + i['client'] + " URL from " + decoded_url_old + " to " + clean_pass + " at " + str(datetime.datetime.now()))
                                 break
 
         with open(data_name, 'w') as json_file:
@@ -703,10 +777,14 @@ def edit_url_arg(arg, cipher) -> None:
         for entry in data['data_entries']:
                 
                 for i in entry.values():
+
+                        encoded_client = i['client'].encode('utf-8')
+                        decrypted_client = cipher.decrypt(encoded_client)
+                        decoded_client = decrypted_client.decode('utf-8')
                         
-                        if cleaned_input == i['client']:
+                        if cleaned_input == decoded_client:
                                 
-                                print(i['client'])
+                                print(decoded_client)
                                 
                                 encoded_url_old = i['url'].encode('utf-8')
                                 decrypted_url_old = cipher.decrypt(encoded_url_old)
@@ -722,7 +800,7 @@ def edit_url_arg(arg, cipher) -> None:
                                 i['url'] = decoded_url_new
                                 flag = True
 
-                                changelist.append("\nedited " + i['client'] + " URL from " + decoded_url_old + " to " + decoded_url_new + " at " + str(datetime.datetime.now()))
+                                changelist.append("\nedited " + i['client'] + " URL from " + decoded_url_old + " to " + clean_pass + " at " + str(datetime.datetime.now()))
 
                                 break
 
@@ -970,7 +1048,7 @@ def check_argument(string, cipher) -> None:
         match command:
 
                 case 'rm':
-                        remove_arg(arg)
+                        remove_arg(arg, cipher)
                 case 'fetch':
                         search_arg(arg, cipher)
                 case 'restore':
@@ -1019,7 +1097,7 @@ while True:
                         help()
                         
                 case "ls":
-                        display()
+                        display(my_cipher)
                         
                 case "fetch":
                         search(my_cipher)
@@ -1031,7 +1109,7 @@ while True:
                         create(my_cipher)
                         
                 case "rm":
-                        remove()
+                        remove(my_cipher)
 
                 case "edit":
                         edit_password(my_cipher)
