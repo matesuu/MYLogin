@@ -1,5 +1,5 @@
 #!/bin/bash
-python3 -m login
+python3 -m MY_LOGIN_CLI
 
 pycache="__pycache__"
 

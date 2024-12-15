@@ -1,38 +1,16 @@
-#Welcome to the MYLogin project.
 import json
 import os
 import datetime
-from cryptography.fernet import Fernet
-
-user_info = str(os.getcwd()) + "/.data/.user.json"
-data_name = str(os.getcwd()) + "/.data/data.json"
-log_path = str(os.getcwd()) + "/logs"
-backups_path = str(os.getcwd()) + "/backups"
-
-changelist = ["access at " + str(datetime.datetime.now())]
-
-if not os.path.exists(user_info):
-
-        print("\033[31m", end = "")
-        print("fatal: data folder does not exist or cannot be located")
-        print("\033[30m", end = "")
-        exit(0)
 
 try:
+        from cryptography.fernet import Fernet
 
-        with open(data_name) as log_open:
+except ImportError:
 
-                temp = json.load(log_open)
-                log_flag = temp['LOGS']
-
-except:
-
-    print("\033[31m", end = "")
-    print("fatal: invalid JSON format (data.json). terminated")
-    print("\033[0m", end = "")
-    exit()
-
-
+        print("\033[31m", end = "")
+        print("fatal: cryptography module is not currently installed. for more details, see installation folder")
+        print("\033[31m", end = "")
+        exit(0)
 
 
 def clear() -> None: #clears console and checks to see what os is being used
@@ -45,14 +23,14 @@ def clear() -> None: #clears console and checks to see what os is being used
                 os.system('clear')
 
 
-def default() -> None:
+def default(dpath, upath) -> None:
 
         default_input = input("default all data? (y/n) ")
         new_input = default_input.replace(" ", '')
 
         if new_input == 'y':
 
-                with open(user_info) as read_user:
+                with open(upath) as read_user:
 
                         default_user = json.load(read_user)
 
@@ -60,11 +38,11 @@ def default() -> None:
                         default_user['val'] = ""
                         default_user['file'] = ""
         
-                        with open(user_info, 'w') as write_user:
+                        with open(upath, 'w') as write_user:
 
                                json.dump(default_user, write_user, indent = 4)
 
-                with open(data_name) as read_data:
+                with open(dpath) as read_data:
 
                         default_data = json.load(read_data)
 
@@ -74,7 +52,7 @@ def default() -> None:
                         default_data['ID'] = "0"
                         default_data['LOGS'] = "F"
 
-                        with open(data_name, 'w') as write_data:
+                        with open(dpath, 'w') as write_data:
 
                                 json.dump(default_data, write_data, indent =4)
                 
@@ -86,7 +64,7 @@ def default() -> None:
 
                 print("process aborted")
 
-def configure_user() -> list:
+def configure_user(path) -> list:
 
         my_name = ""
         my_h = ""
@@ -97,7 +75,7 @@ def configure_user() -> list:
 
         try:
 
-            with open(user_info) as user_file:
+            with open(path) as user_file:
                 
                 this_user = json.load(user_file)
 
@@ -120,9 +98,9 @@ def configure_user() -> list:
 
                         my_h = this_user['val']
 
-                with open(user_info, 'w') as temp:
+                with open(path, 'w') as temp:
 
-                        json.dump(this_user, temp, indent=4)
+                        json.dump(path, temp, indent=4)
 
                 if this_user['file'] == "":
 
@@ -132,7 +110,7 @@ def configure_user() -> list:
                         
                         my_f = this_user['file']
 
-                with open(user_info, 'w') as temp:
+                with open(path, 'w') as temp:
 
                         json.dump(this_user, temp, indent=4)
 
@@ -146,15 +124,15 @@ def configure_user() -> list:
 
                 
 
-def configure_data() -> None: # gets username and path used for backups
+def configure_data(dpath, bpath) -> None: # gets username and path used for backups
         
-        with open(data_name) as data_file:
+        with open(dpath) as data_file:
 
                 this_data = json.load(data_file)
 
                 if this_data['backup_path'] == "":
 
-                        cleaned_path = backups_path
+                        cleaned_path = bpath
                         this_data['backup_path'] = cleaned_path
 
                 if this_data['date_created'] == "":
@@ -162,7 +140,7 @@ def configure_data() -> None: # gets username and path used for backups
                         this_data['date_created'] = str(datetime.datetime.now())
 
                 
-                with open(data_name, 'w') as user_data:
+                with open(dpath, 'w') as user_data:
                         
                         json.dump(this_data, user_data, indent=4)
 
@@ -204,12 +182,13 @@ def info() -> None:
         print("Version Notes:")
         print("1.0: Finished local build repository via JSON storage. Allows for Read-Write operations as well as version control options. Next will be encryption of data.s")
         print("1.1: Added encryption as standard functionality through the crpytography(Fernet) module. See details of how to install in Documentation.")
+        print('1.11: Restructed codebase to function as a module rather than a singular file. Added addtional error handling and bug fixes')
         print("\nWritten by matesuu")
 
 
-def display(cipher) -> None:
+def display(path, cipher) -> None:
     
-        with open(data_name) as outfile:
+        with open(path) as outfile:
                 clients = json.load(outfile)
 
         for client in clients['data_entries']:
@@ -224,12 +203,12 @@ def display(cipher) -> None:
                         print(decoded_name)
                         print("\033[0m", end = "")
 
-def search(cipher) -> None:
+def search(path, cipher) -> None:
 
         user_input = input("client > ")
         cleaned_input = user_input.replace(' ','')
 
-        with open(data_name) as outfile:
+        with open(path) as outfile:
                 curr_data = json.load(outfile)
                 
         flag = False
@@ -275,12 +254,12 @@ def search(cipher) -> None:
         print("")
                 
 
-def search_arg(arg, cipher):
+def search_arg(path, arg, cipher):
 
         user_input = arg
         cleaned_input = user_input.replace(' ','')
 
-        with open(data_name) as outfile:
+        with open(path) as outfile:
                 curr_data = json.load(outfile)
                 
         flag = False
@@ -327,9 +306,9 @@ def search_arg(arg, cipher):
         print("")
                 
 
-def search_all(cipher) -> None:
+def search_all(path, cipher) -> None:
 
-        with open(data_name) as outfile:
+        with open(path) as outfile:
                 curr_data = json.load(outfile)
                 
         for local_dicts in curr_data['data_entries']:
@@ -365,13 +344,13 @@ def search_all(cipher) -> None:
         print("")
 
 
-def create(cipher) -> None:
+def create(path, cipher, log) -> None:
         
 
         flag = False
         size = 0
 
-        with open(data_name) as check_file:
+        with open(path) as check_file:
                 check_data = json.load(check_file)
         
         new_client = input("client > ")
@@ -425,25 +404,25 @@ def create(cipher) -> None:
                 new_entry = {"client" : decoded_client, "username" : decoded_username, "password" : decoded_password, "url" : decoded_url}
                 new_dict = {decoded_date: new_entry}
         
-                with open(data_name, 'r+') as outfile:
+                with open(path, 'r+') as outfile:
                         
                         outfile_data = json.load(outfile)
                         outfile_data['data_entries'].append(new_dict)
                         outfile.seek(0)
                         json.dump(outfile_data, outfile, indent=4)
 
-                        changelist.append("\ncreated new client " + cleaned_client + " at " + str(datetime.datetime.now()))
+                        log.append("\ncreated new client " + cleaned_client + " at " + str(datetime.datetime.now()))
                 
         else:
 
                 print("error: client already exists in directory")
 
-def remove(cipher) -> None:
+def remove(path, cipher, log) -> None:
 
         user_input = input("client > ")
         cleaned_input = user_input.replace(' ','')
         
-        with open(data_name) as outfile:
+        with open(path) as outfile:
                 curr_data = json.load(outfile)
                 
         flag = False
@@ -462,11 +441,11 @@ def remove(cipher) -> None:
                                 curr_data['data_entries'].remove(entry)
                                 flag = True
 
-                                changelist.append("\nremoved client " + decoded_client + " at " + str(datetime.datetime.now()))
+                                log.append("\nremoved client " + decoded_client + " at " + str(datetime.datetime.now()))
 
                                 break
 
-        with open(data_name, 'w') as json_file:
+        with open(path, 'w') as json_file:
                 json.dump(curr_data, json_file, indent=4)
             
         
@@ -474,12 +453,12 @@ def remove(cipher) -> None:
                 print("error: could not locate client")
 
         
-def remove_arg(arg, cipher) -> None:
+def remove_arg(path, arg, cipher, log) -> None:
 
         user_input = arg
         cleaned_input = user_input.replace(' ', '')
         
-        with open(data_name) as outfile:
+        with open(path) as outfile:
                 curr_data = json.load(outfile)
                 
         flag = False
@@ -498,11 +477,11 @@ def remove_arg(arg, cipher) -> None:
                                 curr_data['data_entries'].remove(entry)
                                 flag = True
 
-                                changelist.append("\nremoved client " + decoded_client + " at " + str(datetime.datetime.now()))
+                                log.append("\nremoved client " + decoded_client + " at " + str(datetime.datetime.now()))
 
                                 break
 
-        with open(data_name, 'w') as json_file:
+        with open(path, 'w') as json_file:
                 json.dump(curr_data, json_file, indent=4)
             
         
@@ -511,14 +490,14 @@ def remove_arg(arg, cipher) -> None:
 
 
 
-def edit_username(cipher) -> None:
+def edit_username(path, cipher, log) -> None:
 
         user_input = input("client > ")
         cleaned_input = user_input.replace(' ', '')
 
         flag = False
 
-        with open(data_name) as file:
+        with open(path) as file:
 
                 data = json.load(file)
 
@@ -548,11 +527,11 @@ def edit_username(cipher) -> None:
                                 i['username'] = decoded_username_new
                                 flag = True
 
-                                changelist.append("\nedited " + decoded_client + " username from " + decoded_username_old + " to " + clean_pass + " at " + str(datetime.datetime.now()))
+                                log.append("\nedited " + cleaned_input + " username from " + decoded_username_old + " to " + clean_pass + " at " + str(datetime.datetime.now()))
 
                                 break
 
-        with open(data_name, 'w') as json_file:
+        with open(path, 'w') as json_file:
             
             json.dump(data, json_file, indent=4)
        
@@ -562,14 +541,14 @@ def edit_username(cipher) -> None:
                 print("error: could not locate client")
 
 
-def edit_username_arg(arg, cipher) -> None:
+def edit_username_arg(path, arg, cipher, log) -> None:
 
         user_input = arg
         cleaned_input = user_input.replace(' ', '')
 
         flag = False
 
-        with open(data_name) as file:
+        with open(path) as file:
 
                 data = json.load(file)
 
@@ -599,10 +578,10 @@ def edit_username_arg(arg, cipher) -> None:
                                 i['username'] = decoded_username_new
                                 flag = True
 
-                                changelist.append("\nedited " + i['client'] + " username from " + decoded_username_old + " to " + clean_pass + " at " + str(datetime.datetime.now()))
+                                log.append("\nedited " + cleaned_input + " username from " + decoded_username_old + " to " + clean_pass + " at " + str(datetime.datetime.now()))
                                 break
 
-        with open(data_name, 'w') as json_file:
+        with open(path, 'w') as json_file:
             
             json.dump(data, json_file, indent=4)
        
@@ -611,7 +590,7 @@ def edit_username_arg(arg, cipher) -> None:
 
                 print("error: could not locate client")
         
-def edit_password(cipher) -> None:
+def edit_password(path, cipher, log) -> None:
 
         user_input = input("client > ")
         cleaned_input = user_input.replace(' ', '')
@@ -619,7 +598,7 @@ def edit_password(cipher) -> None:
         flag = False
 
 
-        with open(data_name) as file:
+        with open(path) as file:
 
                 data = json.load(file)
 
@@ -649,11 +628,11 @@ def edit_password(cipher) -> None:
                                 i['password'] = decoded_password_new
                                 flag = True
 
-                                changelist.append("\nedited " + i['client'] + " password from " + decoded_password_old + " to " + clean_pass + " at " + str(datetime.datetime.now()))
+                                log.append("\nedited " + cleaned_input + " password from " + decoded_password_old + " to " + clean_pass + " at " + str(datetime.datetime.now()))
 
                                 break
 
-        with open(data_name, 'w') as json_file:
+        with open(path, 'w') as json_file:
             
             json.dump(data, json_file, indent=4)
        
@@ -663,14 +642,14 @@ def edit_password(cipher) -> None:
                 print("error: could not locate client")
 
 
-def edit_password_arg(arg, cipher) -> None:
+def edit_password_arg(path, arg, cipher, log) -> None:
 
         user_input = arg
         cleaned_input = user_input.replace(' ', '')
 
         flag = False
 
-        with open(data_name) as file:
+        with open(path) as file:
 
                 data = json.load(file)
 
@@ -700,11 +679,11 @@ def edit_password_arg(arg, cipher) -> None:
                                 i['password'] = decoded_password_new
                                 flag = True
 
-                                changelist.append("\nedited " + i['client'] + " password from " + decoded_password_old + " to " + clean_pass + " at " + str(datetime.datetime.now()))
+                                log.append("\nedited " + cleaned_input + " password from " + decoded_password_old + " to " + clean_pass + " at " + str(datetime.datetime.now()))
 
                                 break
 
-        with open(data_name, 'w') as json_file:
+        with open(path, 'w') as json_file:
             
             json.dump(data, json_file, indent=4)
        
@@ -713,14 +692,14 @@ def edit_password_arg(arg, cipher) -> None:
 
                 print("error: could not locate client")
 
-def edit_url(cipher) -> None:
+def edit_url(path, cipher, log) -> None:
 
         user_input = input("client > ")
         cleaned_input = user_input.replace(' ', '')
 
         flag = False
 
-        with open(data_name) as file:
+        with open(path) as file:
 
                 data = json.load(file)
 
@@ -750,10 +729,10 @@ def edit_url(cipher) -> None:
                                 i['url'] = decoded_url_new
                                 flag = True
 
-                                changelist.append("\nedited " + i['client'] + " URL from " + decoded_url_old + " to " + clean_pass + " at " + str(datetime.datetime.now()))
+                                log.append("\nedited " + cleaned_input + " URL from " + decoded_url_old + " to " + clean_pass + " at " + str(datetime.datetime.now()))
                                 break
 
-        with open(data_name, 'w') as json_file:
+        with open(path, 'w') as json_file:
             
             json.dump(data, json_file, indent=4)
        
@@ -763,14 +742,14 @@ def edit_url(cipher) -> None:
                 print("error: could not locate client")
 
 
-def edit_url_arg(arg, cipher) -> None:
+def edit_url_arg(path, arg, cipher, log) -> None:
 
         user_input = arg
         cleaned_input = user_input.replace(' ', '')
 
         flag = False
 
-        with open(data_name) as file:
+        with open(path) as file:
 
                 data = json.load(file)
 
@@ -800,11 +779,11 @@ def edit_url_arg(arg, cipher) -> None:
                                 i['url'] = decoded_url_new
                                 flag = True
 
-                                changelist.append("\nedited " + i['client'] + " URL from " + decoded_url_old + " to " + clean_pass + " at " + str(datetime.datetime.now()))
+                                log.append("\nedited " + cleaned_input + " URL from " + decoded_url_old + " to " + clean_pass + " at " + str(datetime.datetime.now()))
 
                                 break
 
-        with open(data_name, 'w') as json_file:
+        with open(path, 'w') as json_file:
             
             json.dump(data, json_file, indent=4)
        
@@ -814,13 +793,13 @@ def edit_url_arg(arg, cipher) -> None:
                 print("error: could not locate client")
 
 
-def reset() -> None:
+def reset(path, log) -> None:
         
         user_input = input("delete all entries? (y/n) ")
         cleaned_input = user_input.replace(' ', '')
         flag = False
 
-        with open(data_name) as outfile:
+        with open(path) as outfile:
 
                 data = json.load(outfile)
 
@@ -833,22 +812,22 @@ def reset() -> None:
                                 flag = True
                                 break
                         
-        with open(data_name, 'w') as json_file:
+        with open(path, 'w') as json_file:
                 json.dump(data, json_file, indent=4)
 
         
         if flag == True:
                 
                 print("deleted everything")
-                changelist.append("\ndeleted all entries at " + str(datetime.datetime.now()))
+                log.append("\ndeleted all entries at " + str(datetime.datetime.now()))
 
         else:
                 print("process aborted")
 
 
-def backup() -> None:
+def backup(dpath, log) -> None:
 
-        with open(data_name) as file: # opens data.json to read from file and store in dictionary 'data'
+        with open(dpath) as file: # opens data.json to read from file and store in dictionary 'data'
 
                 data = json.load(file)
                 
@@ -858,16 +837,16 @@ def backup() -> None:
         data['ID'] = str(new_id)      # casts new_id to string
         
 
-        with open(data_name, 'w') as update_id:       # opens data.json to write to file and dumps data, the only difference being 
+        with open(dpath, 'w') as update_id:       # opens data.json to write to file and dumps data, the only difference being 
                                                         # the incremented ID
                         
                 json.dump(data, update_id, indent=4)
 
         
 
-        path = data['backup_path']                      # gets path of backup folder
+        bpath = data['backup_path']                      # gets path of backup folder
 
-        if not os.path.exists(path):
+        if not os.path.exists(bpath):
 
                 print('error: backups folder does not exist or cannot be located')
                 return 
@@ -875,27 +854,27 @@ def backup() -> None:
         data['date_created'] = str(datetime.datetime.now())     # stores the date of creation in 'date_created' as a string
         
 
-        if os.path.exists(path +  str(new_id) + '.json'):
+        if os.path.exists(bpath +  str(new_id) + '.json'):
 
-            new_json = open(path + '/backup(' + str(datetime.datetime.now()) + ').json', 'x').close()
+            new_json = open(bpath + '/backup(' + str(datetime.datetime.now()) + ').json', 'x').close()
             
-            with open(path + 'backup(' + str(datetime.datetime.now()) + ').json', 'w') as json_file:
+            with open(bpath + 'backup(' + str(datetime.datetime.now()) + ').json', 'w') as json_file:
 
                 json.dump(data, json_file, indent=4)
 
         else:
             
-            new_json = open(path + '/backup(' + str(new_id) + ').json', 'x').close()
+            new_json = open(bpath + '/backup(' + str(new_id) + ').json', 'x').close()
             
-            with open(path + '/backup(' + str(new_id) + ').json', 'w') as json_file:
+            with open(bpath + '/backup(' + str(new_id) + ').json', 'w') as json_file:
 
                 json.dump(data, json_file, indent=4)
         
-        changelist.append("\ndata backup at " + str(datetime.datetime.now()))
+        log.append("\ndata backup at " + str(datetime.datetime.now()))
 
-def restore() -> None:
+def restore(dpath, log) -> None:
 
-        with open(data_name) as get_path:
+        with open(dpath) as get_path:
             path_data = json.load(get_path)
 
             if not os.path.exists(path_data['backup_path']):
@@ -919,11 +898,11 @@ def restore() -> None:
         try:
                 with open(path_data['backup_path'] + '/' + backup_file) as json_file:
                         backup_data = json.load(json_file)
-                        changelist.append("\nrestored data from " + backup_file + " at " + str(datetime.datetime.now()))
+                        log.append("\nrestored data from " + backup_file + " at " + str(datetime.datetime.now()))
                         
                 backup_data['ID'] = str(new_master)
                 
-                with open(data_name, 'w') as restored_file:
+                with open(dpath, 'w') as restored_file:
                         json.dump(backup_data, restored_file, indent=4)
                         
                 print("restored from file")
@@ -933,9 +912,9 @@ def restore() -> None:
                 print("error: file error")
 
 
-def restore_arg(arg) -> None:
+def restore_arg(dpath, arg, log) -> None:
 
-        with open(data_name) as get_path:
+        with open(dpath) as get_path:
 
                 path_data = json.load(get_path)
 
@@ -958,11 +937,11 @@ def restore_arg(arg) -> None:
         try:
                 with open(path_data['backup_path'] + '/' + backup_file) as json_file:
                         backup_data = json.load(json_file)
-                        changelist.append("\nrestored data from " + backup_file + " at " + str(datetime.datetime.now()))
+                        log.append("\nrestored data from " + backup_file + " at " + str(datetime.datetime.now()))
                         
                 backup_data['ID'] = str(new_master)
                 
-                with open(data_name, 'w') as restored_file:
+                with open(dpath, 'w') as restored_file:
                         json.dump(backup_data, restored_file, indent=4)
                         
                 print("restored from file")
@@ -973,28 +952,28 @@ def restore_arg(arg) -> None:
 
         
 
-def enable() -> None:
+def enable(path) -> None:
 
-    with open(data_name) as enable_logs:
+    with open(path) as enable_logs:
 
         e = json.load(enable_logs)
 
     e['LOGS'] = "T"
     
-    with open(data_name, 'w') as finish_enable:
+    with open(path, 'w') as finish_enable:
 
         json.dump(e, finish_enable, indent=4)
         
 
-def disable() -> None:
+def disable(path) -> None:
 
-    with open(data_name) as disable_logs:
+    with open(path) as disable_logs:
 
         d = json.load(disable_logs)
 
     d['LOGS'] = "F"
 
-    with open(data_name, 'w') as finish_disable:
+    with open(path, 'w') as finish_disable:
 
         json.dump(d, finish_disable, indent=4)
 
@@ -1016,7 +995,7 @@ def icon() -> None:
 
         print("\033[0m", end = "")
 
-def check_argument(string, cipher) -> None:
+def check_argument(path, string, cipher, log) -> None:
 
         # valid: rm, fetch, restore, edit
         op = 0
@@ -1048,17 +1027,17 @@ def check_argument(string, cipher) -> None:
         match command:
 
                 case 'rm':
-                        remove_arg(arg, cipher)
+                        remove_arg(path, arg, cipher, log)
                 case 'fetch':
-                        search_arg(arg, cipher)
+                        search_arg(path, arg, cipher)
                 case 'restore':
-                        restore_arg(arg)
+                        restore_arg(path, arg, log)
                 case 'edit-username':
-                        edit_username_arg(arg, cipher)
+                        edit_username_arg(path, arg, cipher, log)
                 case 'edit-password':
-                        edit_password_arg(arg, cipher)
+                        edit_password_arg(path, arg, cipher, log)
                 case 'edit-url':
-                        edit_url_arg(arg, cipher)
+                        edit_url_arg(path, arg, cipher, log)
                 case _:
                         invalid_argument()
         
@@ -1066,114 +1045,3 @@ def check_argument(string, cipher) -> None:
 def invalid_argument() -> None:
         
         print("error: command not found. For a list of supported comamnds, enter 'help' to console.")
-
-# MAIN
-
-values = configure_user()
-configure_data()
-
-my_username = values[0]
-my_key = values[1].encode('utf-8')
-my_cipher = Fernet(my_key)
-
-print("<STARTING> MYLogin 1.1")
-
-menu()
-
-while True:
-
-        user_input = input(f"\033[32m" + my_username + ":~$ \033[0m")
-
-        if len(user_input.split()) == 1:
-
-                user_input = user_input.replace(' ', '')
-
-        match user_input:
-
-                case "home":
-                        menu()
-                        
-                case "help":
-                        help()
-                        
-                case "ls":
-                        display(my_cipher)
-                        
-                case "fetch":
-                        search(my_cipher)
-
-                case "fetch-all":
-                        search_all(my_cipher)
-                        
-                case "new":
-                        create(my_cipher)
-                        
-                case "rm":
-                        remove(my_cipher)
-
-                case "edit":
-                        edit_password(my_cipher)
-
-                case "edit-username":
-                        edit_username(my_cipher)
-                    
-                case "edit-password":
-                        edit_password(my_cipher)
-
-                case "edit-url":
-                        edit_url(my_cipher)
-                        
-                case "kill-all":
-                        reset()
-
-                case "backup":
-                        backup()
-
-                case "restore":
-                        restore()
-
-                case "enable":
-                        enable()
-
-                case "disable":
-                        disable()
-
-                case "default":
-                        default()
-
-                case "version":
-                        info()
-
-                case "clear":
-                        clear()
-
-                case "cls":
-                        clear()
-
-                case "whoami":
-                        whoami()
-                        
-                case "exit":
-                        break
-                case _:
-                        check_argument(user_input, my_cipher)
-
-
-with open (data_name) as log_flag:
-
-        f = json.load(log_flag)
-
-if(f['LOGS'] == "T" and os.path.exists(log_path)):
-
-        log = open(log_path + "/Log " + str(datetime.datetime.now()) + ".txt", 'a')
-    
-        for i in range(0, len(changelist)):
-
-                log.write(changelist[i])
-        
-        log.write("\nterminated use at " + str(datetime.datetime.now()))
-
-        log.close()
-
-
-print("terminated use at " + str(datetime.datetime.now()))

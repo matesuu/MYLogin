@@ -11,7 +11,7 @@ To start, we must ensure an installation of a given Python3 exists on the local 
 To start the application navigate to the local directory in which the MYLogin folder and do as follows:
 
 my_username:~$ cd <directory>/MYLogin
-my_username:~$ python3 -m login
+my_username:~$ python3 -m MY_LOGIN_CLI
 
 If you are using macOS or Linux Distribution, you can use the bash script provided to begin execution
 
@@ -47,5 +47,8 @@ error: could not locate client - client information could not be found, therefor
 
 error: file restore error - file is not in a supported format (i.e. file is not JSON and uses an unknown or invalid extension)
 
-fatal: invalid JSON format (filename.json) - occurs when given JSON file is not formatted correctly and cannot be parsed. 
+fatal: invalid JSON format (<filename>.json) - occurs when given JSON file is not formatted correctly and cannot be parsed. 
 This error is fatal and terminates execution. For reference, use default github JSON files or reformat manually
+
+fatal: cryptography module is not currently installed. for more details, see installation folder - indicates that the 
+cryptography module is not currently installed and cannot run the utility. See installation folder for how to install.
