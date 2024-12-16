@@ -12,7 +12,7 @@ except:
 
         print("\033[31m", end = "")
         print("fatal: MY_LOGIN module could not be located")
-        print("\033[31m", end = "")
+        print("\033[0m", end = "")
         sys.exit(0)
 
 
@@ -23,7 +23,7 @@ except ImportError:
 
         print("\033[31m", end = "")
         print("fatal: cryptography module is not currently installed. for more details, see installation folder")
-        print("\033[31m", end = "")
+        print("\033[0m", end = "")
         sys.exit(0)
 
 
