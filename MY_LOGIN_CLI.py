@@ -136,10 +136,10 @@ while True:
                         MY_LOGIN.reset(data_name, changelist)
 
                 case "backup":
-                        MY_LOGIN.backup(data_name, changelist)
+                        MY_LOGIN.backup(data_name, my_file_cipher, changelist)
 
                 case "restore":
-                        MY_LOGIN.restore(data_name, changelist)
+                        MY_LOGIN.restore(data_name, my_file_cipher, changelist)
 
                 case "enable":
                         MY_LOGIN.enable(data_name)
@@ -165,7 +165,7 @@ while True:
                 case "exit":
                         break
                 case _:
-                        MY_LOGIN.check_argument(data_name, user_input, my_cipher, changelist)
+                        MY_LOGIN.check_argument(data_name, user_input, my_cipher, my_file_cipher, changelist)
 
 
 with open (data_name) as log_flag:

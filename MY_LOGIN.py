@@ -859,7 +859,7 @@ def reset(path, log) -> None:
                 print("process aborted")
 
 
-def backup(dpath, log) -> None:
+def backup(dpath, fcipher, log) -> None:
 
         with open(dpath) as file: # opens data.json to read from file and store in dictionary 'data'
 
@@ -890,23 +890,28 @@ def backup(dpath, log) -> None:
 
         if os.path.exists(bpath +  str(new_id) + '.json'):
 
-            new_json = open(bpath + '/backup(' + str(datetime.datetime.now()) + ').json', 'x').close()
+                new_json = open(bpath + '/backup(' + str(datetime.datetime.now()) + ').json', 'x').close()
             
-            with open(bpath + 'backup(' + str(datetime.datetime.now()) + ').json', 'w') as json_file:
+                with open(bpath + 'backup(' + str(datetime.datetime.now()) + ').json', 'w') as json_file:
 
-                json.dump(data, json_file, indent=4)
+                        json.dump(data, json_file, indent=4)
+
+                encrypt_file(bpath +  str(new_id) + '.json', fcipher)
 
         else:
             
-            new_json = open(bpath + '/backup(' + str(new_id) + ').json', 'x').close()
+                new_json = open(bpath + '/backup(' + str(new_id) + ').json', 'x').close()
             
-            with open(bpath + '/backup(' + str(new_id) + ').json', 'w') as json_file:
+                with open(bpath + '/backup(' + str(new_id) + ').json', 'w') as json_file:
 
-                json.dump(data, json_file, indent=4)
+                        json.dump(data, json_file, indent=4)
+                
+                encrypt_file(bpath + '/backup(' + str(new_id) + ').json', fcipher)
+
         
         log.append("\ndata backup at " + str(datetime.datetime.now()))
 
-def restore(dpath, log) -> None:
+def restore(dpath, fcipher, log) -> None:
 
         with open(dpath) as get_path:
             path_data = json.load(get_path)
@@ -927,14 +932,16 @@ def restore(dpath, log) -> None:
         
         backup_file = input("restore with > ")
 
-        #note: have to handle case where inputted string is not a valid file... try catch block maybe?
-
         try:
+                decrypt_file(path_data['backup_path'] + '/' + backup_file, fcipher)
+
                 with open(path_data['backup_path'] + '/' + backup_file) as json_file:
                         backup_data = json.load(json_file)
                         log.append("\nrestored data from " + backup_file + " at " + str(datetime.datetime.now()))
                         
                 backup_data['ID'] = str(new_master)
+
+                encrypt_file(path_data['backup_path'] + '/' + backup_file, fcipher)
                 
                 with open(dpath, 'w') as restored_file:
                         json.dump(backup_data, restored_file, indent=4)
@@ -946,7 +953,7 @@ def restore(dpath, log) -> None:
                 print("error: file error")
 
 
-def restore_arg(dpath, arg, log) -> None:
+def restore_arg(dpath, arg, fcipher, log) -> None:
 
         with open(dpath) as get_path:
 
@@ -969,11 +976,15 @@ def restore_arg(dpath, arg, log) -> None:
         #note: have to handle case where inputted string is not a valid file... try catch block maybe?
 
         try:
+                decrypt_file(path_data['backup_path'] + '/' + backup_file, fcipher)
+
                 with open(path_data['backup_path'] + '/' + backup_file) as json_file:
                         backup_data = json.load(json_file)
                         log.append("\nrestored data from " + backup_file + " at " + str(datetime.datetime.now()))
                         
                 backup_data['ID'] = str(new_master)
+
+                encrypt_file(path_data['backup_path'] + '/' + backup_file, fcipher)
                 
                 with open(dpath, 'w') as restored_file:
                         json.dump(backup_data, restored_file, indent=4)
@@ -1033,7 +1044,7 @@ def icon() -> None:
 
         print("\033[0m", end = "")
 
-def check_argument(path, string, cipher, log) -> None:
+def check_argument(path, string, cipher, fcipher, log) -> None:
 
         # valid: rm, fetch, restore, edit
         op = 0
@@ -1069,7 +1080,7 @@ def check_argument(path, string, cipher, log) -> None:
                 case 'fetch':
                         search_arg(path, arg, cipher)
                 case 'restore':
-                        restore_arg(path, arg, log)
+                        restore_arg(path, arg, fcipher, log)
                 case 'edit-username':
                         edit_username_arg(path, arg, cipher, log)
                 case 'edit-password':
