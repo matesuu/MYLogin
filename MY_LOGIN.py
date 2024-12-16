@@ -1,5 +1,6 @@
 import json
 import os
+import sys
 import datetime
 
 try:
@@ -12,6 +13,32 @@ except ImportError:
         print("\033[31m", end = "")
         exit(0)
 
+
+def encrypt_file(path, cipher) -> None:
+
+        with open(path, 'r') as decrypted:
+
+                data = decrypted.read()
+                encoded_data = data.encode('utf-8')
+                encrypted_data = cipher.encrypt(encoded_data)
+        
+        with open(path, 'wb') as write_back:
+
+                write_back.write(encrypted_data)
+
+
+def decrypt_file(path, cipher) -> None:
+
+        with open(path, 'rb') as encrypted:
+
+                data = encrypted.read()
+
+        decrypted_data = cipher.decrypt(data)
+        decoded_data = decrypted_data.decode('utf-8')
+
+        with open(path, 'w') as write_back:
+
+                write_back.write(decoded_data)
 
 def clear() -> None: #clears console and checks to see what os is being used
 
@@ -69,6 +96,7 @@ def configure_user(path) -> list:
         my_name = ""
         my_h = ""
         my_f = ""
+        flag = 0
 
         key = Fernet.generate_key()
         file = Fernet.generate_key()
@@ -98,17 +126,23 @@ def configure_user(path) -> list:
 
                         my_h = this_user['val']
 
-                with open(path, 'w') as temp:
-
-                        json.dump(path, temp, indent=4)
 
                 if this_user['file'] == "":
 
                         this_user['file'] = file.decode('utf-8')
+                        my_f = this_user['file']
 
                 else:
                         
                         my_f = this_user['file']
+
+                if this_user['status'] == "D":
+
+                        flag = 0
+
+                else:
+
+                        flag = 1
 
                 with open(path, 'w') as temp:
 
@@ -120,7 +154,7 @@ def configure_user(path) -> list:
                 print("\033[0m", end = "")
                 exit()
 
-        return [my_name, my_h]
+        return [my_name, my_h, my_f, flag]
 
                 
 
@@ -959,6 +993,7 @@ def enable(path) -> None:
         e = json.load(enable_logs)
 
     e['LOGS'] = "T"
+    print("logs enabled")
     
     with open(path, 'w') as finish_enable:
 
@@ -972,10 +1007,13 @@ def disable(path) -> None:
         d = json.load(disable_logs)
 
     d['LOGS'] = "F"
+    print("logs disabled")
+    
 
     with open(path, 'w') as finish_disable:
 
         json.dump(d, finish_disable, indent=4)
+
 
 
 def icon() -> None:

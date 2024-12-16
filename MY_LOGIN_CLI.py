@@ -1,9 +1,20 @@
 #Welcome to the MYLogin project.
-import MY_LOGIN
-
 import json
+import sys
 import os
 import datetime
+
+
+try:
+        import MY_LOGIN
+
+except:
+
+        print("\033[31m", end = "")
+        print("fatal: MY_LOGIN module could not be located")
+        print("\033[31m", end = "")
+        sys.exit(0)
+
 
 try:
         from cryptography.fernet import Fernet
@@ -13,7 +24,7 @@ except ImportError:
         print("\033[31m", end = "")
         print("fatal: cryptography module is not currently installed. for more details, see installation folder")
         print("\033[31m", end = "")
-        exit(0)
+        sys.exit(0)
 
 
 user_info = str(os.getcwd()) + "/.data/.user.json"
@@ -21,22 +32,41 @@ data_name = str(os.getcwd()) + "/.data/data.json"
 log_path = str(os.getcwd()) + "/logs"
 backups_path = str(os.getcwd()) + "/backups"
 
+values = MY_LOGIN.configure_user(user_info)
+
+my_username = values[0]
+
+my_key = values[1].encode('utf-8')
+my_cipher = Fernet(my_key)
+
+my_file_key = values[2].encode('utf-8')
+my_file_cipher = Fernet(my_file_key)
+
+encryption_flag = values[3]
+
+if encryption_flag == 1:
+
+        MY_LOGIN.decrypt_file(data_name, my_file_cipher)
+
+        with open(user_info) as change_encryption_flag:
+
+                f = json.load(change_encryption_flag)
+                f['status'] = "D"
+                
+                with open(user_info, 'w') as redecrypt:
+
+                        json.dump(f, redecrypt, indent=4)
+
+MY_LOGIN.configure_data(data_name, backups_path)
+
 changelist = ["access at " + str(datetime.datetime.now())]
 
-if not os.path.exists(user_info):
+if not os.path.exists(str(os.getcwd()) + "/.data"):
 
         print("\033[31m", end = "")
         print("fatal: data folder does not exist or cannot be located")
         print("\033[30m", end = "")
-        exit(0)
-
-
-if not os.path.exists("MY_LOGIN.py"):
-
-        print("\033[31m", end = "")
-        print("fatal: MY_LOGIN module does not exist or cannot be located")
-        print("\033[30m", end = "")
-        exit(0)
+        sys.exit(0)
 
 try:
 
@@ -50,17 +80,10 @@ except:
     print("\033[31m", end = "")
     print("fatal: invalid JSON format (data.json). terminated")
     print("\033[0m", end = "")
-    exit()
+    sys.exit(0)
 
 
 # MAIN
-
-values = MY_LOGIN.configure_user(user_info)
-MY_LOGIN.configure_data(data_name, backups_path)
-
-my_username = values[0]
-my_key = values[1].encode('utf-8')
-my_cipher = Fernet(my_key)
 
 print("<STARTING> MYLogin 1.1")
 
@@ -160,6 +183,19 @@ if(f['LOGS'] == "T" and os.path.exists(log_path)):
         log.write("\nterminated use at " + str(datetime.datetime.now()))
 
         log.close()
+
+
+MY_LOGIN.encrypt_file(data_name, my_file_cipher)
+
+
+with open(user_info) as change_decryption_flag:
+
+        f = json.load(change_decryption_flag)
+        f['status'] = "E"
+
+        with open(user_info, 'w') as reencrypt:
+
+                json.dump(f, reencrypt, indent=4)
 
 
 print("terminated use at " + str(datetime.datetime.now()))
