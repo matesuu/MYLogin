@@ -1076,17 +1076,30 @@ def check_argument(path, string, cipher, fcipher, log) -> None:
         match command:
 
                 case 'rm':
+
+                        decrypt_file(path, fcipher)
                         remove_arg(path, arg, cipher, log)
+                        encrypt_file(path, fcipher)
                 case 'fetch':
+                        decrypt_file(path, fcipher)
                         search_arg(path, arg, cipher)
+                        encrypt_file(path, fcipher)
                 case 'restore':
+                        decrypt_file(path, fcipher)
                         restore_arg(path, arg, fcipher, log)
+                        encrypt_file(path, fcipher)
                 case 'edit-username':
+                        decrypt_file(path, fcipher)
                         edit_username_arg(path, arg, cipher, log)
+                        encrypt_file(path, fcipher)
                 case 'edit-password':
+                        decrypt_file(path, fcipher)
                         edit_password_arg(path, arg, cipher, log)
+                        encrypt_file(path, fcipher)
                 case 'edit-url':
+                        decrypt_file(path, fcipher)
                         edit_url_arg(path, arg, cipher, log)
+                        encrypt_file(path, fcipher)
                 case _:
                         invalid_argument()
         

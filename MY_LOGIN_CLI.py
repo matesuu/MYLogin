@@ -82,6 +82,7 @@ except:
     print("\033[0m", end = "")
     sys.exit(0)
 
+MY_LOGIN.encrypt_file(data_name, my_file_cipher)
 
 # MAIN
 
@@ -106,40 +107,76 @@ while True:
                         MY_LOGIN.help()
                         
                 case "ls":
+                        
+                        MY_LOGIN.decrypt_file(data_name, my_file_cipher)
                         MY_LOGIN.display(data_name, my_cipher)
+                        MY_LOGIN.encrypt_file(data_name, my_file_cipher)
                         
                 case "fetch":
+
+                        MY_LOGIN.decrypt_file(data_name, my_file_cipher)
                         MY_LOGIN.search(data_name, my_cipher)
+                        MY_LOGIN.encrypt_file(data_name, my_file_cipher)
 
                 case "fetch-all":
+
+                        MY_LOGIN.decrypt_file(data_name, my_file_cipher)
                         MY_LOGIN.search_all(data_name, my_cipher)
+                        MY_LOGIN.encrypt_file(data_name, my_file_cipher)
                         
                 case "new":
+
+                        MY_LOGIN.decrypt_file(data_name, my_file_cipher)
                         MY_LOGIN.create(data_name, my_cipher, changelist)
-                        
+                        MY_LOGIN.encrypt_file(data_name, my_file_cipher)
+
                 case "rm":
+                        
+                        MY_LOGIN.decrypt_file(data_name, my_file_cipher)
                         MY_LOGIN.remove(data_name, my_cipher, changelist)
+                        MY_LOGIN.encrypt_file(data_name, my_file_cipher)
 
                 case "edit":
+
+                        MY_LOGIN.decrypt_file(data_name, my_file_cipher)
                         MY_LOGIN.edit_password(data_name, my_cipher, changelist)
+                        MY_LOGIN.encrypt_file(data_name, my_file_cipher)
 
                 case "edit-username":
+
+                        MY_LOGIN.decrypt_file(data_name, my_file_cipher)
                         MY_LOGIN.edit_username(data_name, my_cipher, changelist)
+                        MY_LOGIN.encrypt_file(data_name, my_file_cipher)
                     
                 case "edit-password":
+
+                        MY_LOGIN.decrypt_file(data_name, my_file_cipher)
                         MY_LOGIN.edit_password(data_name, my_cipher, changelist)
+                        MY_LOGIN.encrypt_file(data_name, my_file_cipher)
 
                 case "edit-url":
+
+                        MY_LOGIN.decrypt_file(data_name, my_file_cipher)
                         MY_LOGIN.edit_url(data_name, my_cipher, changelist)
+                        MY_LOGIN.encrypt_file(data_name, my_file_cipher)
                         
                 case "kill-all":
+
+                        MY_LOGIN.decrypt_file(data_name, my_file_cipher)
                         MY_LOGIN.reset(data_name, changelist)
+                        MY_LOGIN.encrypt_file(data_name, my_file_cipher)
 
                 case "backup":
+
+                        MY_LOGIN.decrypt_file(data_name, my_file_cipher)
                         MY_LOGIN.backup(data_name, my_file_cipher, changelist)
+                        MY_LOGIN.encrypt_file(data_name, my_file_cipher)
 
                 case "restore":
+
+                        MY_LOGIN.decrypt_file(data_name, my_file_cipher)
                         MY_LOGIN.restore(data_name, my_file_cipher, changelist)
+                        MY_LOGIN.encrypt_file(data_name, my_file_cipher)
 
                 case "enable":
                         MY_LOGIN.enable(data_name)
@@ -148,7 +185,10 @@ while True:
                         MY_LOGIN.disable(data_name)
 
                 case "default":
+
+                        MY_LOGIN.decrypt_file(data_name, my_file_cipher)
                         MY_LOGIN.default(data_name, user_info)
+                        MY_LOGIN.encrypt_file(data_name, my_file_cipher)
 
                 case "version":
                         MY_LOGIN.info()
@@ -168,6 +208,8 @@ while True:
                         MY_LOGIN.check_argument(data_name, user_input, my_cipher, my_file_cipher, changelist)
 
 
+MY_LOGIN.decrypt_file(data_name, my_file_cipher)
+
 with open (data_name) as log_flag:
 
         f = json.load(log_flag)
@@ -184,10 +226,6 @@ if(f['LOGS'] == "T" and os.path.exists(log_path)):
 
         log.close()
 
-
-MY_LOGIN.encrypt_file(data_name, my_file_cipher)
-
-
 with open(user_info) as change_decryption_flag:
 
         f = json.load(change_decryption_flag)
@@ -198,4 +236,5 @@ with open(user_info) as change_decryption_flag:
                 json.dump(f, reencrypt, indent=4)
 
 
+MY_LOGIN.encrypt_file(data_name, my_file_cipher)
 print("terminated use at " + str(datetime.datetime.now()))
