@@ -7,7 +7,7 @@ Requirements:
 
 Mac/Linux (using apt):
 
-Run packages.sh (dont forget to chmod +x bash.sh)
+Run appropriate script (dont forget to chmod +x bash.sh). If this doesn't work, install manually
 
 Windows:
 
