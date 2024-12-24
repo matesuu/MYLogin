@@ -216,7 +216,8 @@ def info() -> None:
         print("Version Notes:")
         print("1.0: Finished local build repository via JSON storage. Allows for Read-Write operations as well as version control options. Next will be encryption of data.s")
         print("1.1: Added encryption as standard functionality through the crpytography(Fernet) module. See details of how to install in Documentation.")
-        print('1.11: Restructed codebase to function as a module rather than a singular file. Added addtional error handling and bug fixes')
+        print("1.11: Restructured codebase to function as a module rather than a singular file. Added addtional error handling and bug fixes")
+        print("1.2: Security improvements and fixes")
         print("\nWritten by matesuu")
 
 
