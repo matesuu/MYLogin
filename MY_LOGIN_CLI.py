@@ -86,7 +86,7 @@ MY_LOGIN.encrypt_file(data_name, my_file_cipher)
 
 # MAIN
 
-print("<STARTING> MYLogin 1.1")
+print("<STARTING> MYLogin 1.2")
 
 MY_LOGIN.menu()
 
