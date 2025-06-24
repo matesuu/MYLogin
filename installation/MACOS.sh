@@ -9,7 +9,6 @@ fi
 echo "installing dependencies..."
 
 pip3 install cryptography
-pip3 install selenium
 
 echo "success!"
 
